@@ -75,8 +75,8 @@ $(document).ready(function() {
       repo_url = 'data/';
   }
 
-  d3.tsv(repo_url + meta_file, function(d) {
-      d.Id = +d.Id;
+  d3.tsv(repo_url + meta_file, function(d,i) {
+      d.Id = i+1;
       d.Longitude = +d.Longitude;
       d.Latitude = +d.Latitude;
       d.Selected = false;
