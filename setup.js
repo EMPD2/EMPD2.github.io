@@ -48,7 +48,7 @@ var user_commit, user_branch, user_repo, user_meta_file;
 // data specifiers
 var repo_url = 'data/',
     meta_file = 'meta.tsv',
-    data_repo = 'Chilipp/EMPD-data';
+    data_repo = 'EMPD2/EMPD-data';
 
 dc.config.defaultColors(d3.schemeRdBu[11])
 
@@ -74,8 +74,6 @@ $(document).ready(function() {
   } else {
       repo_url = 'data/';
   }
-
-  console.log(repo_url + meta_file);
 
   d3.tsv(repo_url + meta_file, function(d) {
       d.Id = +d.Id;
@@ -144,7 +142,7 @@ $(document).ready(function() {
         var promises = [];
 
         sampleNames.forEach(function(sampleName) {promises.push(d3.tsv(
-            'data/samples/' + sampleName + '.tsv'))
+            repo_url + 'samples/' + sampleName + '.tsv'))
         });
 
         Promise.all(promises).then(function(data) { downloadJSON(data.flat(), 'data.tsv')});
@@ -161,7 +159,7 @@ $(document).ready(function() {
 
         var pollenData = [];
 
-        d3.tsv('data/samples/' + data[Id].SampleName + '.tsv').then(function(taxa_data) {
+        d3.tsv(repo_url + 'samples/' + data[Id].SampleName + '.tsv').then(function(taxa_data) {
 
             document.getElementById("pollen-diagram").innerHTML = "<svg/>";
             document.getElementById("pollen-diagram-legend").innerHTML = "<svg/>";
