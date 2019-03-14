@@ -227,34 +227,8 @@ $(document).ready(function() {
 
 //====================================================================
 
-function JSON2TSV(objArray) {
-   var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
-   var str = '';
-   var line = '';
-
-   var head = array[0];
-   for (var index in array[0]) {
-           if (index != "Selected" & index != "Id") line += index + '\t';
-   }
-
-   line = line.slice(0, -1);
-   str += line + '\r\n';
-
-   for (var i = 0; i < array.length; i++) {
-       var line = '';
-
-       for (var index in array[i]) {
-           if (index != "Selected" & index != "Id") line += array[i][index] + '\t';
-       }
-
-       line = line.slice(0, -1);
-       str += line + '\r\n';
-   }
-   return str;
-}
-
 function downloadJSON(data, fileName="data.tsv") {
-    var tsv = JSON2TSV(data);
+    var tsv = d3.tsvFormat(data);
     var downloadLink = document.createElement("a");
     var blob = new Blob(["\ufeff", tsv]);
     var url = URL.createObjectURL(blob);
