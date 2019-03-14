@@ -61,7 +61,7 @@ $(document).ready(function() {
   user_repo = urlParams.get('repo');
   user_meta_file = urlParams.get('meta');
 
-  data_repo = user_repo ? user_repo : 'Chilipp/EMPD-data';
+  data_repo = user_repo ? user_repo : 'EMPD2/EMPD-data';
   meta_file = user_meta_file ? user_meta_file : 'meta.tsv'
 
   if (user_commit) {
