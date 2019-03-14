@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <title>EMPD Viewer</title>
+
+    <script src="https://unpkg.com/jquery@3.3.1/dist/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="lib/jquery-ui-1.12.1.custom/jquery-ui.min.css">
+    <script src="lib/jquery-ui-1.12.1.custom/external/jquery/jquery.js"></script>
+    <script src="lib/jquery-ui-1.12.1.custom/jquery-ui.js"></script>
+
+    <script src="https://unpkg.com/d3@5.7.0/dist/d3.min.js"></script>
+    <script src="https://unpkg.com/d3-tip@0.9.1/dist/index.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/crossfilter@1.3.12/crossfilter.min.js"></script>
+
+    <script type="text/javascript" src="https://unpkg.com/dc@3.0.9/dc.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/dc@3.0.9/dc.min.css" />
+
+    <script type="text/javascript" src="https://unpkg.com/leaflet@1.3.4/dist/leaflet-src.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" />
+
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+
+    <script src="https://unpkg.com/dc-addons@0.13.5/dist/leaflet-map/dc-leaflet.js"></script>
+
+    <link rel="stylesheet" href="https://unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="lib/leaflet.zoomhome-0.2.0/dist/leaflet.zoomhome.css"/>
+    <script src="lib/leaflet.zoomhome-0.2.0/dist/leaflet.zoomhome.js"></script>
+
+    <script src="https://unpkg.com/leaflet-mouse-position@1.0.4/src/L.Control.MousePosition.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-mouse-position@1.0.4/src/L.Control.MousePosition.css" />
+
+    <script src="https://unpkg.com/leaflet-minimap@3.6.1/dist/Control.MiniMap.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-minimap@3.6.1/dist/Control.MiniMap.min.css" />
+
+    <script src="https://unpkg.com/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
+    <link href="https://unpkg.com/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="sticky-footer-navbar.css" rel="stylesheet">
+
+    <script src="setup.js"></script>
+    <link href="style.css" rel="stylesheet" type="text/css">
+    <link href="non-responsive.css" rel="stylesheet" type="text/css">
+
+  </head>
+
+  <body>
+
+  <div id="wrap">
+
+      <!-- Fixed navbar -->
+      <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html">Eurasian Modern Pollen Database</a>
+          </div>
+          <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+              <li><a href="help.html" target="_blank">Help</a></li>
+              <li><a href="data.html" target="_blank">Data</a></li>
+              <li><a href="contact.html" target="_blank">Contact</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+
+      <!-- Begin page content -->
+      <div class="container" style="width: 1750px">
+          <div class="row">
+      		<div class='dc-data-count' id='chart-count'>
+      			<span class='filter-count'></span>selected out of <span class='total-count'></span> records.
+      		</div>
+          </div>
+      	<div class="row" id="map-row">
+            <div class="dc-chart col-xs-10">
+          		<div id="chart-map" style="width:95%; height: 500px;"></div>
+            </div>
+            <div class="dc-chart col-xs-2">
+                <div id="select1" style="width:100%;">
+                  <div>
+                    Data contributor: <a class='reset'
+                       href='javascript:select1.filterAll();dc.redrawAll();'
+                       style='visibility: hidden;'>reset</a>
+                  </div>
+                </div>
+                <br><br>
+                <div id="select2" style="width:100%;">
+                  <div>
+                    Responsible person/analyst (worker): <a class='reset'
+                       href='javascript:select2.filterAll();dc.redrawAll();'
+                       style='visibility: hidden;'>reset</a>
+                  </div>
+                </div>
+                <br><br>
+                <div id="version-chart" style="width:100%;">
+                   <div class="dc-chart-title">
+                       EMPD version
+                       <a class="reset" href="javascript:versionChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+                   </div>
+                </div>
+	        </div>
+        </div>
+        <div class="row" id="pollen-row">
+            <div class="dc-chart col-xs-10">
+                <div id="pollen-diagram" style="width:95%;"></div>
+            </div>
+            <div class="dc-chart col-xs-2">
+                <div id="pollen-diagram-legend"></div>
+            </div>
+        </div>
+	<br>
+    <div class="row">
+      <input class="btn pull-right" type="image" id="button_shipping" src="img/shipping.png" title="Deliver cart as tab-separated file">
+      <select class="pull-right" id="download-type">
+           <option value="data">Pollen Counts</option>
+           <option value="metadata">Metadata</option>
+      </select>
+      <input class="btn pull-right" type="image" id="button_cartdelete" src="img/cartdelete.png" title="Empty download cart">
+      <input class="btn pull-right" type="image" id="button_cartadd" src="img/cartadd.png" title="Add selection on the map to download cart">
+    </div>
+    <br>
+        <div class='row'>
+           <a id="resetTableLink" class="reset" href="javascript:resetTable();" style="display: none;">reset</a>
+	    <br>
+            <div class='scroll'>
+            <table class='span12 table table-hover' width="5000px" id='chart-table'>
+                <thead><tr class='header'>
+                    <th class="th_Sel">Download</th>
+                    <th class="th_Id">Id</th>
+                    <th class="th_SampleName">SampleName</th>
+                    <th class="th_OriginalSampleName">OriginalSampleName</th>
+                    <th class="th_SiteName">SiteName</th>
+                    <th class="th_Country">Country</th>
+                    <th class="th_Longitude">Longitude</th>
+                    <th class="th_Latitude">Latitude</th>
+                    <th class="th_Elevation">Elevation</th>
+                    <th class="th_LocationReliability">LocationReliability</th>
+                    <th class="th_LocationNotes">LocationNotes</th>
+                    <th class="th_AreaOfSite">AreaOfSite</th>
+                    <th class="th_SampleContext">SampleContext</th>
+                    <th class="th_SiteDescription">SiteDescription</th>
+                    <th class="th_VegDescription">VegDescription</th>
+                    <th class="th_SampleType">SampleType</th>
+                    <th class="th_SampleMethod">SampleMethod</th>
+                    <th class="th_AgeBP">AgeBP</th>
+                    <th class="th_AgeUncertainty">AgeUncertainty</th>
+                    <th class="th_ispercent">ispercent</th>
+                    <th class="th_Notes">Notes</th>
+                    <th class="th_Publication1">Publication1</th>
+                    <th class="th_DOI1">DOI1</th>
+                    <th class="th_Publication2">Publication2</th>
+                    <th class="th_DOI2">DOI2</th>
+                    <th class="th_Publication3">Publication3</th>
+                    <th class="th_DOI3">DOI3</th>
+                    <th class="th_Publication4">Publication4</th>
+                    <th class="th_DOI4">DOI4</th>
+                    <th class="th_Publication5">Publication5</th>
+                    <th class="th_DOI5">DOI5</th>
+                    <th class="th_Worker1_Role">Worker1_Role</th>
+                    <th class="th_Worker1_LastName">Worker1_LastName</th>
+                    <th class="th_Worker1_Initials">Worker1_Initials</th>
+                    <th class="th_Worker1_FirstName">Worker1_FirstName</th>
+                    <th class="th_Worker1_Address1">Worker1_Address1</th>
+                    <th class="th_Worker1_Address2">Worker1_Address2</th>
+                    <th class="th_Worker1_Email1">Worker1_Email1</th>
+                    <th class="th_Worker1_Email2">Worker1_Email2</th>
+                    <th class="th_Worker1_Phone1">Worker1_Phone1</th>
+                    <th class="th_Worker1_Phone2">Worker1_Phone2</th>
+                    <th class="th_Worker2_Role">Worker2_Role</th>
+                    <th class="th_Worker2_LastName">Worker2_LastName</th>
+                    <th class="th_Worker2_Initials">Worker2_Initials</th>
+                    <th class="th_Worker2_FirstName">Worker2_FirstName</th>
+                    <th class="th_Worker2_Address1">Worker2_Address1</th>
+                    <th class="th_Worker2_Address2">Worker2_Address2</th>
+                    <th class="th_Worker2_Email1">Worker2_Email1</th>
+                    <th class="th_Worker2_Email2">Worker2_Email2</th>
+                    <th class="th_Worker2_Phone1">Worker2_Phone1</th>
+                    <th class="th_Worker2_Phone2">Worker2_Phone2</th>
+                    <th class="th_Worker3_Role">Worker3_Role</th>
+                    <th class="th_Worker3_LastName">Worker3_LastName</th>
+                    <th class="th_Worker3_Initials">Worker3_Initials</th>
+                    <th class="th_Worker3_FirstName">Worker3_FirstName</th>
+                    <th class="th_Worker3_Address1">Worker3_Address1</th>
+                    <th class="th_Worker3_Address2">Worker3_Address2</th>
+                    <th class="th_Worker3_Email1">Worker3_Email1</th>
+                    <th class="th_Worker3_Email2">Worker3_Email2</th>
+                    <th class="th_Worker3_Phone1">Worker3_Phone1</th>
+                    <th class="th_Worker3_Phone2">Worker3_Phone2</th>
+                    <th class="th_Worker4_Role">Worker4_Role</th>
+                    <th class="th_Worker4_LastName">Worker4_LastName</th>
+                    <th class="th_Worker4_Initials">Worker4_Initials</th>
+                    <th class="th_Worker4_FirstName">Worker4_FirstName</th>
+                    <th class="th_Worker4_Address1">Worker4_Address1</th>
+                    <th class="th_Worker4_Address2">Worker4_Address2</th>
+                    <th class="th_Worker4_Email1">Worker4_Email1</th>
+                    <th class="th_Worker4_Email2">Worker4_Email2</th>
+                    <th class="th_Worker4_Phone1">Worker4_Phone1</th>
+                    <th class="th_Worker4_Phone2">Worker4_Phone2</th>
+                </tr></thead>
+            </table>
+            </div>
+            <div id="paging" style='text-align: center; padding-bottom: 3em;'>
+               Showing <span id="begin"></span>-<span id="end"></span> of <span id="size"></span> <span id="totalsize"></span>
+               <input id="prev-table-page" class="btn" type="Button" value="Previous" onclick="javascript:prev_table_page()" />
+               <input id="next-table-page" class="btn" type="button" value="Next" onclick="javascript:next_table_page()"/>
+            </div>
+        </div>
+      </div><!-- /.container -->
+
+    </div>
+
+    <div id="footer">
+       <div class="container">
+		<font color="red">Unofficial and unstable and not yet finalized version! Please do not use or distribute.</font>
+      </div><!-- /.container -->
+    </div>
+
+  </body>
+</html>

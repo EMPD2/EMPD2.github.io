@@ -1,0 +1,310 @@
+.popuptooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black;
+}
+
+.popuptooltip .tooltiptext {
+    visibility: hidden;
+    width: 200px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    top: -5px;
+    left: 110%;
+}
+
+.popuptooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 1em;
+    right: 100%;
+    margin-top: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent black transparent transparent;
+}
+.popuptooltip:hover .tooltiptext {
+    visibility: visible;
+}
+
+#charts {
+  padding: 0 0;
+}
+
+.disabled {
+  opacity: 0.2;
+  pointer-events: none;
+  cursor: default;
+}
+
+.chart {
+  display: inline-block;
+  margin: 0 20px 20px;
+}
+
+.reset {
+  padding-left: 1em;
+  font-size: smaller;
+  color: #555;
+}
+
+.preset {
+  padding-left: 1em;
+  font-size: smaller;
+  color: #555;
+}
+
+.background.bar {
+  fill: #ccc;
+}
+
+.dc-chart g.row text {
+  fill: #333;
+}
+
+#chart-depth .foreground.bar {
+  fill: #2EA3DB;
+}
+
+#chart-age .foreground.bar {
+  fill: #F5B441;
+}
+
+#chart-age svg {
+  padding-top: 1em;
+  overflow: visible;
+}
+
+.axis path, .axis line {
+  fill: none;
+  stroke: #333;
+  shape-rendering: crispEdges;
+}
+
+.axis text {
+  font: 10px sans-serif;
+  fill: #333;
+}
+
+.x-axis-label,.y-axis-label {
+  font: 10px sans-serif;
+  fill: #333;
+}
+
+.dc-chart-title {
+  color: #333;
+  font-weight: normal;
+  font-style: italic;
+}
+
+.filter {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+  text-align: left;
+}
+
+.imghelp {
+  border-radius: 10px;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.symbol {
+  opacity: 0.5;
+}
+
+div.scroll {
+      width:100%;
+      overflow-x:scroll;
+}
+
+#chart-table table {
+ table-layout: fixed;
+}
+
+#chart-table tbody {
+  display: block;
+  width:10000px;
+  height: 400px;
+  overflow-y: auto;
+}
+
+#chart-table thead {
+  width:10000px;
+}
+
+#chart-table>thead>tr>th, #chart-table>tbody>tr>td {
+  float: left;
+  line-height: 1em;
+  border: 0px;
+  padding: 5px;
+}
+
+#chart-table>thead>tr>th {
+  font-weight: normal;
+}
+
+.dc-chart {
+  padding: 0px;
+}
+
+#chart-table .th_Sel , #chart-table .dc-table-column._0 { width: 50px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Id , #chart-table .dc-table-column._1 { width: 50px;  text-align: right; padding-right: 5px; }
+#chart-table .th_SampleName , #chart-table .dc-table-column._2 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_OriginalSampleName , #chart-table .dc-table-column._3 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_SiteName , #chart-table .dc-table-column._4 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Country , #chart-table .dc-table-column._5 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Longitude , #chart-table .dc-table-column._6 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Latitude , #chart-table .dc-table-column._7 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Elevation , #chart-table .dc-table-column._8 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_LocationReliability , #chart-table .dc-table-column._9 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_LocationNotes , #chart-table .dc-table-column._10 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_AreaOfSite , #chart-table .dc-table-column._11 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_SampleContext , #chart-table .dc-table-column._12 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_SiteDescription , #chart-table .dc-table-column._13 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_VegDescription , #chart-table .dc-table-column._14 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_SampleType , #chart-table .dc-table-column._15 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_SampleMethod , #chart-table .dc-table-column._16 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_AgeBP , #chart-table .dc-table-column._17 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_AgeUncertainty , #chart-table .dc-table-column._18 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_ispercent , #chart-table .dc-table-column._19 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Notes , #chart-table .dc-table-column._20 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Publication1 , #chart-table .dc-table-column._21 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_DOI1 , #chart-table .dc-table-column._22 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Publication2 , #chart-table .dc-table-column._23 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_DOI2 , #chart-table .dc-table-column._24 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Publication3 , #chart-table .dc-table-column._25 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_DOI3 , #chart-table .dc-table-column._26 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Publication4 , #chart-table .dc-table-column._27 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_DOI4 , #chart-table .dc-table-column._28 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Publication5 , #chart-table .dc-table-column._29 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_DOI5 , #chart-table .dc-table-column._30 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker1_Role , #chart-table .dc-table-column._31 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker1_LastName , #chart-table .dc-table-column._32 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker1_Initials , #chart-table .dc-table-column._33 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker1_FirstName , #chart-table .dc-table-column._34 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker1_Address1 , #chart-table .dc-table-column._35 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker1_Address2 , #chart-table .dc-table-column._36 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker1_Email1 , #chart-table .dc-table-column._37 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker1_Email2 , #chart-table .dc-table-column._38 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker1_Phone1 , #chart-table .dc-table-column._39 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker1_Phone2 , #chart-table .dc-table-column._40 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker2_Role , #chart-table .dc-table-column._41 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker2_LastName , #chart-table .dc-table-column._42 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker2_Initials , #chart-table .dc-table-column._43 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker2_FirstName , #chart-table .dc-table-column._44 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker2_Address1 , #chart-table .dc-table-column._45 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker2_Address2 , #chart-table .dc-table-column._46 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker2_Email1 , #chart-table .dc-table-column._47 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker2_Email2 , #chart-table .dc-table-column._48 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker2_Phone1 , #chart-table .dc-table-column._49 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker2_Phone2 , #chart-table .dc-table-column._50 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker3_Role , #chart-table .dc-table-column._51 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker3_LastName , #chart-table .dc-table-column._52 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker3_Initials , #chart-table .dc-table-column._53 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker3_FirstName , #chart-table .dc-table-column._54 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker3_Address1 , #chart-table .dc-table-column._55 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker3_Address2 , #chart-table .dc-table-column._56 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker3_Email1 , #chart-table .dc-table-column._57 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker3_Email2 , #chart-table .dc-table-column._58 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker3_Phone1 , #chart-table .dc-table-column._59 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker3_Phone2 , #chart-table .dc-table-column._60 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker4_Role , #chart-table .dc-table-column._61 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker4_LastName , #chart-table .dc-table-column._62 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker4_Initials , #chart-table .dc-table-column._63 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker4_FirstName , #chart-table .dc-table-column._64 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker4_Address1 , #chart-table .dc-table-column._65 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker4_Address2 , #chart-table .dc-table-column._66 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker4_Email1 , #chart-table .dc-table-column._67 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker4_Email2 , #chart-table .dc-table-column._68 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker4_Phone1 , #chart-table .dc-table-column._69 { width: 140px;  text-align: right; padding-right: 5px; }
+#chart-table .th_Worker4_Phone2 , #chart-table .dc-table-column._70 { width: 140px;  text-align: right; padding-right: 5px; }
+
+#chart-table .dc-table-column  {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+#chart-table input[type="checkbox"] {
+    padding: 0;
+    margin-left: 15px;
+    margin-right: 10px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+#chart-table td {
+  cursor: pointer;
+  color: #333;
+  font-size: 13px;
+  border: 0px;
+}
+
+#chart-table thead tr {
+  background: #333;
+  background-color: #ddd;
+  color: #333;
+  font-weight: normal;
+  font-style: italic;
+  padding: 0px;
+}
+
+#chart-table tbody tr {
+  background: #333;
+  background-color: #eee;
+  border-top: 1px solid #ddd;
+  font-weight: normal;
+}
+
+#chart-table tr:hover {
+  background: #ccc;
+}
+
+#chart-table tr:hover td {
+  font-weight: bold;
+}
+
+.d3-tip {
+  z-index: 1000;
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+
+/* Style northward tooltips differently */
+.d3-tip.n:after {
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
+}
+
+.tooltip-table td {
+    padding-left: 10px;
+    padding-right: 10px;
+}

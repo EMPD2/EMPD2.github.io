@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>EMPD Viewer / Help</title>
+
+    <script src="https://unpkg.com/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script src="https://unpkg.com/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
+    <link href="https://unpkg.com/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="sticky-footer-navbar.css" rel="stylesheet">
+
+    <link href="style.css" rel="stylesheet" type="text/css" media="all">
+    <link href="non-responsive.css" rel="stylesheet" type="text/css">
+
+  </head>
+
+  <body>
+
+    <div id="wrap">
+
+      <!-- Fixed navbar -->
+      <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html">Eurasian Modern Pollen Database</a>
+          </div>
+          <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+              <li><a href="help.html" target="_blank">Help</a></li>
+              <li><a href="data.html" target="_blank">Data</a></li>
+              <li><a href="contact.html" target="_blank">Contact</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+
+      <!-- Begin page content -->
+      <div class="container">
+	</br>
+
+    <font color="red">This page is not yet adapted to the EMPD viewer!</font><br>
+
+
+      	<div class="row">
+		<div class="col-xs-12"><b>Related articles:</b></br>
+		<ul>
+			<li>
+			An interactive tool for navigation within a database of water and carbon stable isotope records from natural archives
+			<a href="http://www.clim-past-discuss.net/cp-2015-165/" target="_blank">(http://www.clim-past-discuss.net/cp-2015-165/)</a>
+			<li>
+			<a href="http://nbviewer.jupyter.org/github/PBrockmann/Paleo_Data_Spreadsheet/blob/master/Paleo_Data_Spreadsheet.ipynb">
+			Proposal for a structured spreadsheet for Paleo Data to interface with the Linked Paleo Data container
+			</a>
+		<ul>
+	        </div>
+        </div>
+	</br>
+
+      	<div class="row">
+		<div class="col-xs-12"><b>Description:</b></br>
+		This application allows you to select different paleo-oceanographic proxies collected at LSCE
+		according to various dimensions (spatial position, depth, age, archive, material type and chronological information).
+		</div>
+        </div>
+	</br>
+
+      	<div class="row">
+		<div class="col-xs-2">
+		<img class="imghelp img-responsive" src="img_help/filter_01.png"/>
+		<img class="imghelp img-responsive" src="img_help/filter_02.png"/>
+		You can apply filters on dimensions such as depth, age, archive, material type and chronological information by interacting with the charts. All charts are linked together so that filters applied in one chart will update the others, as well as the map.
+		</div>
+		<div class="col-xs-2">
+		<img class="imghelp img-responsive" src="img_help/filter_03.png"/>
+		To cancel a filter, click on "reset".
+		</div>
+		<div class="col-xs-3">
+		<img class="imghelp img-responsive" src="img_help/proxy_01.png"/>
+		You can view information about a proxy (id, position, etc.) when you mouse over its position marker. This will also highlight in bold text the corresponding row in the data table showing the proxy information, along with the species and the reference of the paper. Click on the DOI to view the listing in google scholar, the web search engine for scientific papers.
+		</div>
+		<div class="col-xs-2">
+		<img class="imghelp img-responsive" src="img_help/cluster_02.png"/>
+		When several proxies share the same location, they are grouped together in a cluster (colored circles).
+		Click on a cluster to display all the proxies it contains.
+		</div>
+		<div class="col-xs-3">
+		<img class="imghelp img-responsive" src="img_help/cluster_01.png"/>
+		Red clusters represent more than 100 proxies, yellow clusters contain more than 10, and all others are green.
+		</div>
+        </div>
+
+	</br>
+      	<div class="row">
+              <div class="col-xs-4">
+		<p><b>Technical architecture:</b>
+		<p>This application uses following javascript libraries:
+			<ul>
+			<li><b>dc.js</b> Dimensional Charting Javascript Library<br>
+				<a target="_blank" href="https://dc-js.github.io/dc.js/">https://dc-js.github.io/dc.js/</a>
+			<li><b>dc-addons</b> to dc.js<br>
+				<a target="_blank" href="https://github.com/Intellipharm/dc-addons">https://github.com/Intellipharm/dc-addons</a>
+			<li><b>Crossfilter</b> for Fast Multidimensional Filtering for Coordinated Views<br>
+				<a target="_blank" href="http://square.github.io/crossfilter">http://square.github.io/crossfilter</a>
+			<li><b>D3.js</b> for Data-Driven Documents<br>
+				<a target="_blank" href="http://d3js.org">http://d3js.org</a>
+			<li><b>Leaflet</b> Open-Source JavaScript Library for Mobile-Friendly Interactive Maps<br>
+				<a target="_blank" href="http://leafletjs.com">http://leafletjs.com</a>
+			</ul>
+		</p>
+              </div>
+              <div class="col-xs-4">
+		<p><b>Open source code:</b>
+		<p>This application was created and developed by Patrick Brockmann (CEA - LSCE), with coding contributions from Cathy Nangini (CNRS - LSCE). The source code is available at:
+			<a target="_blank" href="http://github.com/PBrockmann/ClimateProxiesFinder">http://github.com/PBrockmann/ClimateProxiesFinder</a>
+		</p>
+		<p><b>Credits:</b>
+			<ul>
+			<li><p>The baselayer tiles are provided by the ArcGis Online service<br>
+				<a target="_blank" href="http://services.arcgisonline.com/ArcGIS/rest/services/Ocean_Basemap/MapServer">http://services.arcgisonline.com/ArcGIS/rest/services/Ocean_Basemap/MapServer</a>
+				</p>
+			<li><p>Shopping cart icons from <a href="https://www.iconfinder.com/iconsets/christmas-shop-icons" target="_blank">Christmas&Shop icons</a>
+				by Artyom Khamitov License: CC 3.0
+				</p>
+			</ul>
+              </div>
+              <div class="col-xs-4">
+		<p><b>Known issues:</b>
+			<ul>
+			<li>The projection used is a "Spherical Mercator" with an extension to North and South limited to 85°.
+			    This is a problem for data collected at more northern or southern positions. In this case, proxy  positions are set to 85°.
+			</ul>
+		</p>
+              </div>
+
+        </div>
+      </div><!-- /.container -->
+
+    </div>
+
+    <div id="footer">
+       <div class="container">
+		<p class="text-muted credit">Created by <a target="_blank" href="http://www.lsce.ipsl.fr/en"><span title="Climate and Environment Sciences Laboratory" style="font-weight:bold;">LSCE</span></a>&nbsp;<a target="_blank" href="http://www.lsce.ipsl.fr/en"><img src="img/LSCE_Icon.png" title="Climate and Environment Sciences Laboratory"/></a> and hosted by <a target="_blank" href="http://www.ipsl.fr/en"><span title="Institut Pierre Simon Laplace" style="font-weight:bold;">IPSL</span></a>&nbsp;<a target="_blank" href="http://www.ipsl.fr/en"><img src="img/IPSL_logo.png" title="Institut Pierre Simon Laplace"/></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Version 2.1 - 2016/10/04</p>
+      </div><!-- /.container -->
+    </div>
+
+  </body>
+</html>
