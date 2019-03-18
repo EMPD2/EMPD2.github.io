@@ -158,13 +158,12 @@ $(document).ready(function() {
         highlightDisplayed();
 
         var pollenData = [];
-
         d3.tsv(repo_url + 'samples/' + data[Id].SampleName + '.tsv').then(function(taxa_data) {
 
             document.getElementById("pollen-diagram").innerHTML = "<svg/>";
             document.getElementById("pollen-diagram-legend").innerHTML = "<svg/>";
             // document.getElementById("map-row").style.height = "800px";
-            plotPollen(taxa_data.filter(d => d.make_percent == "True"), "pollen-diagram");
+            plotPollen(taxa_data.filter(d => d.make_percent.toLowerCase() == "true"), "pollen-diagram");
             plotPollenLegend('pollen-diagram-legend');
         });
 
