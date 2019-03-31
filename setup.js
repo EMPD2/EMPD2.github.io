@@ -13,7 +13,10 @@ var originGroup;
 var materialDim;
 var materialGroup;
 
+var editor;
+
 var displayedId = -1;
+var displayedData = {};
 
 var select1;
 var select2;
@@ -30,6 +33,8 @@ var Tree_color = "#568e14";
 var Trees_color = Tree_color;
 var Herbs_color = "#ff7f50";
 var Unkown_color = "#FF4400";
+
+var blockMetaTable = false;
 
 var groupColors = {
     "Trees & Shrubs": Trees_color,
@@ -84,6 +89,9 @@ $(document).ready(function() {
     // Limit latitudes according to latitude map range (-85:85)
       if (d.Latitude < -85) d.Latitude = -85;
       if (d.Latitude > 85) d.Latitude = 85;
+      for (var key in d) {
+          d[key] = typeof d[key] !== 'undefined' ? d[key] : '';
+      }
       return d;
   }).then(function(data){
 
@@ -142,7 +150,8 @@ $(document).ready(function() {
         var promises = [];
 
         sampleNames.forEach(function(sampleName) {promises.push(d3.tsv(
-            repo_url + 'samples/' + sampleName + '.tsv'))
+            repo_url + 'samples/' + sampleName + '.tsv',
+            function(d) {d.samplename = sampleName; return d;}))
         });
 
         Promise.all(promises).then(function(data) { downloadJSON(data.flat(), 'data.tsv')});
@@ -155,10 +164,14 @@ $(document).ready(function() {
     theMap.on('popupopen', function(event) {
         Id = event.popup._source.key[2] - 1;
         displayedId = data[Id].Id;
+        displayedData = data[Id];
         highlightDisplayed();
 
         var pollenData = [];
         d3.tsv(repo_url + 'samples/' + data[Id].SampleName + '.tsv').then(function(taxa_data) {
+
+            blockMetaTable = true;
+            $('#meta-tabs a[href="#pollen-plot"]').tab('show');
 
             document.getElementById("pollen-diagram").innerHTML = "<svg/>";
             document.getElementById("pollen-diagram-legend").innerHTML = "<svg/>";
@@ -172,7 +185,12 @@ $(document).ready(function() {
         Id = event.popup._source.key[2] - 1;
         document.getElementById("pollen-diagram").innerHTML = "";
         document.getElementById("pollen-diagram-legend").innerHTML = "";
+        if (editor.root.collapsed == false) {
+            editor.root.toggle_button.click();
+        }
+        blockMetaTable = false;
         displayedId = -1;
+        displayedData = {};
         highlightDisplayed();
     });
 
@@ -204,20 +222,51 @@ $(document).ready(function() {
       childMarkers = a.layer.getAllChildMarkers();
       childMarkersIds = childMarkers.map(function(obj) {return obj.key[2]}).sort();
 
-      childMarkersIds.forEach(function(Id, i) {
-      	d3.selectAll(".dc-table-column._1")
-      		.text(function (d) {
-      	     		if (parseInt(d.Id) == Id) {
-      				if (i==0) this.parentNode.scrollIntoView();  // scroll for first
-      	                 	d3.select(this.parentNode).style("font-weight", "bold");
-                    document.getElementById('wrap').scrollIntoView();
-      	               	}
-      	     		return d.Id;
-              	});
-      });
+      if (!blockMetaTable) {
+          childMarkersIds.forEach(function(Id, i) {
+          	d3.selectAll(".dc-table-column._1")
+          		.text(function (d) {
+          	     		if (parseInt(d.Id) == Id) {
+          				if (i==0) this.parentNode.scrollIntoView();  // scroll for first
+          	                 	d3.select(this.parentNode).style("font-weight", "bold");
+                        document.getElementById('wrap').scrollIntoView();
+          	               	}
+          	     		return d.Id;
+                  	});
+          });
+      }
     });
     markers.on('clustermouseout', function (a) {
       highlightDisplayed();
+    });
+
+    var editor_element = document.getElementById('editor_holder');
+
+    var editor_schema = {
+        "type": "object",
+        "title": "Edit meta data",
+        "options": {
+            "collapsed": true,
+        },
+        "properties": {}
+    };
+
+    for (var key in data[0]) {
+        editor_schema["properties"][key] = {type: "string"};
+    };
+    editor = new JSONEditor(editor_element, {
+        "theme": 'bootstrap3',
+        "template": "handlebars",
+        "iconlib": "bootstrap3",
+        "no_additional_properties": true,
+        "schema": editor_schema,
+    });
+    editor.disable();
+
+    document.getElementById('btn-save').addEventListener(
+        'click',function() {// Get the value from the editor
+            var value = editor.getValue();
+            data[value.Id - 1] = value;
     });
 
   });
@@ -226,8 +275,9 @@ $(document).ready(function() {
 
 //====================================================================
 
-function downloadJSON(data, fileName="data.tsv") {
-    var tsv = d3.tsvFormat(data);
+function downloadJSON(data, fileName="data.tsv", exclude=["Selected", "Id", "Edited"]) {
+    var  columns = [...new Set(data.reduce((r, e) => [...r, ...Object.keys(e)], []))];
+    var tsv = d3.tsvFormat(data, columns.filter(s => exclude.indexOf(s) === -1));
     var downloadLink = document.createElement("a");
     var blob = new Blob(["\ufeff", tsv]);
     var url = URL.createObjectURL(blob);
@@ -508,6 +558,29 @@ function workerTooltip(last, first, address1, address2, email1, email2) {
     return ret
 }
 
+
+//====================================================================
+
+function editDisplayed() {
+    editor.setValue(displayedData);
+    editor.enable();
+    editor.getEditor('root.SampleName').disable();
+    editor.getEditor('root.Id').disable();
+    if (editor.root.collapsed == true) {
+        editor.root.toggle_button.click();
+    }
+    $('#meta-tabs a[href="#meta-editor"]').tab('show');
+    document.getElementById('meta-editor').scrollIntoView();
+}
+
+//====================================================================
+// taken from https://stackoverflow.com/a/46181 on March 30th, 2019
+
+function validateEmail(email) {
+  var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(email);
+}
+
 //====================================================================
 // Paging functions for dataTable. Taken from
 // http://dc-js.github.io/dc.js/examples/table-pagination.html
@@ -578,8 +651,9 @@ function initCrossfilter(data) {
   //-----------------------------------
   workerDim = xf.dimension(function(d) {
       ret = [d.Worker1_LastName + ', ' + d.Worker1_FirstName];
-      if (d.Worker2_LastName != "") ret.push(d.Worker2_LastName + ', ' + d.Worker2_FirstName);
-      if (d.Worker3_LastName != "") ret.push(d.Worker3_LastName + ', ' + d.Worker3_FirstName);
+      if (d.Worker2_LastName != "" && typeof d.Worker2_LastName !== 'undefined') ret.push(d.Worker2_LastName + ', ' + d.Worker2_FirstName);
+      if (d.Worker3_LastName != "" && typeof d.Worker3_LastName !== 'undefined') ret.push(d.Worker3_LastName + ', ' + d.Worker3_FirstName);
+      if (d.Worker4_LastName != "" && typeof d.Worker4_LastName !== 'undefined') ret.push(d.Worker4_LastName + ', ' + d.Worker4_FirstName);
       return ret
   }, true)
 
@@ -660,6 +734,8 @@ function initCrossfilter(data) {
                 + (data[Id].Publication4 != "" ? "<li>" + data[Id].Publication4 + "</li>" : "")
                 + (data[Id].Publication5 != "" ? "<li>" + data[Id].Publication5 + "</li>" : "")
                 + (data[Id].Publication1 != "" ? "</ul></details>": "")
+                + '<input class="btn pull-right" type="image" src="img/cartadd.png" title="Add this sample to the download cart" onclick="javascript:displayedData.Selected=true;dataTable.redraw();" style="height:30px;">'
+                + '<input class="btn pull-right" type="image" src="img/pencil.png" title="Edit the meta information for this sample" onclick="javascript:editDisplayed();" style="height:30px;">'
                 + '</div>'
             );
         mapMarkers[Id] = marker;
@@ -678,10 +754,14 @@ function initCrossfilter(data) {
 			d3.selectAll(".dc-table-column._1")
 				.text(function (d, i) {
 			     		if (parseInt(d.Id) == e.target.options.Id) {
-						this.parentNode.scrollIntoView();
+                            console.log(blockMetaTable);
+                            if (blockMetaTable != true) {
+                                $('#meta-tabs a[href="#meta-table"]').tab('show');
+        						this.parentNode.scrollIntoView();
 			                 	d3.select(this.parentNode).style("font-weight", "bold");
                                 document.getElementById('wrap').scrollIntoView();
-			               	}
+                            }
+		               	}
 			     		return d.Id;
 		        	});
 		});
@@ -843,6 +923,17 @@ function resetTable() {
   dc.redrawAll();
   // make reset link invisible
   d3.select("#resetTableLink").style("display", "none");
+}
+
+function submitData() {
+    if (document.getElementById('submit-form').checkValidity()) {
+        grecaptcha.ready(function() {
+            grecaptcha.execute('6LflGpsUAAAAAKhm3e-A5q30qh1099ZZeF884Vld',{action: 'homepage'}).then(
+                function(token) {
+                    // console.log(token);
+                });
+        });
+    }
 }
 
 // reset all except mapChart
