@@ -307,23 +307,17 @@ $(document).ready(function() {
         //     grecaptcha.execute('6LflGpsUAAAAAKhm3e-A5q30qh1099ZZeF884Vld',{action: 'submit_data'}).then(
         //         function(token) {
         //             formData["token"] = token;
-                    $.post(
-                        form.attr('action'),
-                        JSON.stringify(formData),
+                    $.post(form.attr('action'), JSON.stringify(formData)).then(
                         function(data, status) {
-                            console.log(status);
-                            if (status == "success") {
-                                var div2hide = $("#submit-failed")
-                                var div2show = $("#submit-successed")
-                            } else {
-                                var div2show = $("#submit-failed")
-                                var div2hide = $("#submit-successed")
-                            }
-                            div2show.html(status + ": " + data);
-                            div2hide.hide();
-                            div2show.show();
-                        }
-                    );
+                            $("#submit-successed").html(status + ": " + data);
+                            $("#submit-failed").hide();
+                            $("#submit-successed").show();
+                        },
+                        function(jqxhr, status, errorThrown) {
+                            $("#submit-failed").html(status + ": " + jqxhr.responseText);
+                            $("#submit-successed").hide();
+                            $("#submit-failed").show();
+                    });
         //         });
         // });
         return false;
