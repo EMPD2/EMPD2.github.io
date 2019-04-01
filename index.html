@@ -43,7 +43,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@json-editor/json-editor@latest/dist/jsoneditor.min.js"></script>
 
-    <script src="https://www.google.com/recaptcha/api.js?render=6LflGpsUAAAAAKhm3e-A5q30qh1099ZZeF884Vld"></script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
 
 
     <script src="setup.js"></script>
@@ -258,6 +259,8 @@
                             <label for="submitter_mail">Email*</label>
                             <input type="email" class="form-control" id="submitter_mail" name="submitter_mail" placeholder="janedoe@example.com" required>
                         </div>
+                        <div class="g-recaptcha" data-sitekey="6LcRaJsUAAAAAFlLu_KInPKccFGDJpir7hYLDaZ4"></div>
+                        <br/>
                          <button class="btn btn-primary" type="submit" id="btn-submit">Submit</button>
                     </form>
                     <div class="alert alert-danger" role="alert" id="submit-failed"></div>
