@@ -71,6 +71,7 @@ $(document).ready(function() {
 
   if (user_commit) {
       repo_url = 'https://raw.githubusercontent.com/' + data_repo + '/' + user_commit + '/';
+      user_branch = 'master';
   } else if (user_branch) {
       repo_url = 'https://raw.githubusercontent.com/' + data_repo + '/' + user_branch + '/';
   } else if (user_repo) {
@@ -78,6 +79,7 @@ $(document).ready(function() {
       repo_url = 'https://raw.githubusercontent.com/' + data_repo + '/' + user_branch + '/';
   } else {
       repo_url = 'data/';
+      user_branch = 'master';
   }
 
   d3.tsv(repo_url + meta_file, function(d,i) {
@@ -85,6 +87,7 @@ $(document).ready(function() {
       d.Longitude = +d.Longitude;
       d.Latitude = +d.Latitude;
       d.Selected = false;
+      d.Edited = false;
 
     // Limit latitudes according to latitude map range (-85:85)
       if (d.Latitude < -85) d.Latitude = -85;
@@ -160,6 +163,23 @@ $(document).ready(function() {
      }
 
     });
+
+    $("#download-edits").click(function() {
+        downloadJSON(data.filter(function(d){return d.Edited == true}),
+                     'metadata.tsv');
+    });
+
+    if (data_repo == 'EMPD2/EMPD-data' && user_branch == 'master') {
+        document.getElementById("submit-instructions").innerHTML += (
+            " Please download the metadata using the button below and send it via mail."
+        );
+        $("#submit-form").hide();
+    } else {
+        document.getElementById("submit-instructions").innerHTML += (
+            " You can download the metadata using the button below and send it via mail, or you submit it by filling out the form below. Note that the latter  is only possible if the pull request has the label <code>viewer-editable</code>. You can set this label if you write <code>@EMPD-admin allow-edits</code> in a comment in this PR."
+        );
+    }
+
     // load diagram on popup
     theMap.on('popupopen', function(event) {
         Id = event.popup._source.key[2] - 1;
@@ -266,8 +286,51 @@ $(document).ready(function() {
     document.getElementById('btn-save').addEventListener(
         'click',function() {// Get the value from the editor
             var value = editor.getValue();
+            value["Edited"] = true;
             data[value.Id - 1] = value;
     });
+
+    $("#submit-form").submit(function(e){
+        var form = $(this);
+        var rawForm = form.serializeArray();
+        var formData = {};
+        for (var i = 0; i < rawForm.length; i++){
+            formData[rawForm[i]['name']] = rawForm[i]['value'];
+        }
+
+        formData["repo"] = data_repo;
+        formData["branch"] = user_branch;
+        formData["meta"] = meta_file;
+        formData["metadata"] = data.filter(function(d){return d.Edited == true});
+
+        // grecaptcha.ready(function() {
+        //     grecaptcha.execute('6LflGpsUAAAAAKhm3e-A5q30qh1099ZZeF884Vld',{action: 'submit_data'}).then(
+        //         function(token) {
+        //             formData["token"] = token;
+                    $.post(
+                        form.attr('action'),
+                        JSON.stringify(formData),
+                        function(data, status) {
+                            console.log(status);
+                            if (status == "success") {
+                                var div2hide = $("#submit-failed")
+                                var div2show = $("#submit-successed")
+                            } else {
+                                var div2show = $("#submit-failed")
+                                var div2hide = $("#submit-successed")
+                            }
+                            div2show.html(status + ": " + data);
+                            div2hide.hide();
+                            div2show.show();
+                        }
+                    );
+        //         });
+        // });
+        return false;
+    });
+
+    $("#submit-failed").hide();
+    $("#submit-successed").hide();
 
   });
 
@@ -754,7 +817,6 @@ function initCrossfilter(data) {
 			d3.selectAll(".dc-table-column._1")
 				.text(function (d, i) {
 			     		if (parseInt(d.Id) == e.target.options.Id) {
-                            console.log(blockMetaTable);
                             if (blockMetaTable != true) {
                                 $('#meta-tabs a[href="#meta-table"]').tab('show');
         						this.parentNode.scrollIntoView();
@@ -927,12 +989,25 @@ function resetTable() {
 
 function submitData() {
     if (document.getElementById('submit-form').checkValidity()) {
-        grecaptcha.ready(function() {
-            grecaptcha.execute('6LflGpsUAAAAAKhm3e-A5q30qh1099ZZeF884Vld',{action: 'homepage'}).then(
-                function(token) {
-                    // console.log(token);
-                });
-        });
+        // grecaptcha.ready(function() {
+        //     grecaptcha.execute('6LflGpsUAAAAAKhm3e-A5q30qh1099ZZeF884Vld',{action: 'homepage'}).then(
+        //         function(token) {
+        //
+        //         });
+        // });
+        var payload = {};
+        var form = document.forms['submit-form'];
+        for (var key in form) {
+            console.log(key);
+        }
+
+        // for (var i = 0; i < x.length; i++) {
+        //
+        // $.post('https://still-dusk-71857.herokuapp.com/empd-viewer/hook ',
+        //     {
+        //
+        //     },
+        //     function(data, status){console.log(data); console.log(status);});
     }
 }
 
