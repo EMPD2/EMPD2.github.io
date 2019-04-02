@@ -43,6 +43,8 @@ var groupColors = {
     "Aquatics": Ocean_color
 }
 
+var defaultEditorProperties = {}
+
 var diagramJSON = {};
 
 var mapMarkers = {};
@@ -260,34 +262,126 @@ $(document).ready(function() {
       highlightDisplayed();
     });
 
-    var editor_element = document.getElementById('editor_holder');
+    // fill default properties
+    ["Longitude", "Latitude", "Elevation", "AreaOfSite", "AgeBP"].forEach(
+        function(numberField) {
+            defaultEditorProperties[numberField] = {
+                "type": "number",
+            };
+        }
+    );
+    defaultEditorProperties["Longitude"]["maximum"] = 360.;
+    defaultEditorProperties["Longitude"]["minimum"] = -180.;
+    defaultEditorProperties["Latitude"]["maximum"] = 90;
+    defaultEditorProperties["Latitude"]["minimum"] = -90;
+    defaultEditorProperties["AreaOfSite"]["minimum"] = 0;
 
-    var editor_schema = {
-        "type": "object",
-        "title": "Edit meta data",
-        "options": {
-            "collapsed": true,
-        },
-        "properties": {}
-    };
-
-    for (var key in data[0]) {
-        editor_schema["properties"][key] = {type: "string"};
-    };
-    editor = new JSONEditor(editor_element, {
-        "theme": 'bootstrap3',
-        "template": "handlebars",
-        "iconlib": "bootstrap3",
-        "no_additional_properties": true,
-        "schema": editor_schema,
+    // fill boolean properties
+    ['ispercent', 'Selected', 'Edited'].forEach(function (booleanField) {
+        defaultEditorProperties[booleanField] = {
+            "type": "boolean",
+            "format": "checkbox",
+        };
     });
-    editor.disable();
 
-    document.getElementById('btn-save').addEventListener(
-        'click',function() {// Get the value from the editor
-            var value = editor.getValue();
-            value["Edited"] = true;
-            data[value.Id - 1] = value;
+    // fill fixed tables
+    var promises = [];
+    var fixedMap = {
+        "LocationReliability": "Location Reliability",
+        "SampleContext": "Sample Context",
+        "GroupID": "groupid",
+        "Country": "Country",
+        "SampleType": "SampleType",
+        "AgeUncertainty": "Age Uncertainty",
+        "SampleMethod": "CollectionMethod"
+    };
+
+    Object.keys(fixedMap).forEach(function (name) {
+        var colname = fixedMap[name];
+        defaultEditorProperties[name] = {
+            "type": "string",
+            "enum": [""],
+        };
+        promises.push(d3.tsv(
+            repo_url + 'postgres/scripts/tables/' + name + '.tsv',
+            function(d) {
+                defaultEditorProperties[name]["enum"].push(
+                    d[colname]);
+                return d;
+            }));
+    });
+
+    var workers = ['Worker1', 'Worker2', 'Worker3', 'Worker4'];
+    workers.forEach(function (worker) {
+        defaultEditorProperties[worker + '_Role'] = {
+            "type": "string",
+            "enum": [""],
+        };
+        defaultEditorProperties[worker + '_Email1'] = {
+            "type": "string",
+            "format": "email",
+        };
+        defaultEditorProperties[worker + '_Email2'] = {
+            "type": "string",
+            "format": "email",
+        };
+    });
+
+    promises.push(d3.tsv(
+        repo_url + 'postgres/scripts/tables/WorkerRole.tsv',
+        function(d) {
+            workers.forEach(function(worker) {
+                defaultEditorProperties[worker + '_Role']["enum"].push(
+                    d["WorkerRole"]);
+                });
+                return d;
+            }));
+
+    Promise.all(promises).then(function(res) {
+        console.log(defaultEditorProperties);
+        var editor_element = document.getElementById('editor_holder');
+
+        var editor_schema = {
+            "type": "object",
+            "title": "Edit meta data",
+            "options": {
+                "collapsed": true,
+            },
+            "properties": {}
+        };
+
+        for (var key in data[0]) {
+            if (typeof defaultEditorProperties[key] !== 'undefined') {
+                editor_schema["properties"][key] = defaultEditorProperties[key];
+            } else {
+                editor_schema["properties"][key] = {"type": "string"};
+            }
+        };
+        editor = new JSONEditor(editor_element, {
+            "theme": 'bootstrap3',
+            "template": "handlebars",
+            "iconlib": "bootstrap3",
+            "no_additional_properties": true,
+            "schema": editor_schema,
+        });
+        editor.disable();
+
+        document.getElementById('btn-save').addEventListener(
+            'click',function() {// Get the value from the editor
+                var errors = editor.validate();
+
+                if (errors.length) {
+                  // errors is an array of objects, each with a `path`, `property`, and `message` parameter
+                  // `property` is the schema keyword that triggered the validation error (e.g. "minLength")
+                  // `path` is a dot separated path into the JSON object (e.g. "root.path.to.field")
+                  console.log(errors);
+                }
+                else {
+                    var value = editor.getValue();
+                    value["Edited"] = true;
+                    data[value.Id - 1] = value;
+                }
+        });
     });
 
     $("#submit-form").submit(function(e){
