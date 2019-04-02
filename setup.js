@@ -397,10 +397,10 @@ $(document).ready(function() {
         formData["meta"] = meta_file;
         formData["metadata"] = data.filter(function(d){return d.Edited == true});
 
-        // grecaptcha.ready(function() {
-        //     grecaptcha.execute('6LflGpsUAAAAAKhm3e-A5q30qh1099ZZeF884Vld',{action: 'submit_data'}).then(
-        //         function(token) {
-        //             formData["token"] = token;
+        grecaptcha.ready(function() {
+            grecaptcha.execute('6LflGpsUAAAAAKhm3e-A5q30qh1099ZZeF884Vld',{action: 'submit_data'}).then(
+                function(token) {
+                    formData["token"] = token;
                     $.post(form.attr('action'), JSON.stringify(formData)).then(
                         function(data, status) {
                             $("#submit-successed").html(status + ": " + data);
@@ -412,8 +412,8 @@ $(document).ready(function() {
                             $("#submit-successed").hide();
                             $("#submit-failed").show();
                     });
-        //         });
-        // });
+                });
+        });
         return false;
     });
 
