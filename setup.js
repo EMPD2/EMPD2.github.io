@@ -401,6 +401,8 @@ $(document).ready(function() {
             grecaptcha.execute('6LflGpsUAAAAAKhm3e-A5q30qh1099ZZeF884Vld',{action: 'submit_data'}).then(
                 function(token) {
                     $("#submit-info").html("Please be patient, we are just dealing with your data. This may take one or two minutes and you should receive an email to " + formData.submitter_mail);
+                    $("#submit-failed").hide();
+                    $("#submit-successed").hide();
                     $("#submit-info").show();
                     formData["token"] = token;
                     $.post(form.attr('action'), JSON.stringify(formData)).then(
