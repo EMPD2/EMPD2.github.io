@@ -399,16 +399,20 @@ $(document).ready(function() {
 
         grecaptcha.ready(function() {
             grecaptcha.execute('6LflGpsUAAAAAKhm3e-A5q30qh1099ZZeF884Vld',{action: 'submit_data'}).then(
+                $("#submit-info").html("Please be patient, we are just dealing with your data. This may take one or two minutes and you should receive an email to " + formData.submitter_mail);
+                $("#submit-info").show();
                 function(token) {
                     formData["token"] = token;
                     $.post(form.attr('action'), JSON.stringify(formData)).then(
                         function(data, status) {
                             $("#submit-successed").html(status + ": " + data);
+                            $("#submit-info").hide();
                             $("#submit-failed").hide();
                             $("#submit-successed").show();
                         },
                         function(jqxhr, status, errorThrown) {
                             $("#submit-failed").html(status + ": " + jqxhr.responseText);
+                            $("#submit-info").hide();
                             $("#submit-successed").hide();
                             $("#submit-failed").show();
                     });
@@ -417,6 +421,7 @@ $(document).ready(function() {
         return false;
     });
 
+    $("#submit-info").hide();
     $("#submit-failed").hide();
     $("#submit-successed").hide();
 
