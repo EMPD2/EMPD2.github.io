@@ -237,7 +237,7 @@
                     <p id="submit-instructions">Thank you for contributing your data!</p>
                     <p><button type="button" class="btn btn-link" id='download-edits'>Download edited data</button></p>
                     <form id='submit-form' action="https://still-dusk-71857.herokuapp.com/empd-viewer/hook", method="post" target='_blank'>
-                        <div class="form-group">
+                        <div class="row form-group">
                             <div class="col-md-4 mb-3">
                                 <label for="submitter_firstname">First name*</label>
                                 <input type="text" class="form-control" id="submitter_firstname" name="submitter_firstname" placeholder="Jane" required>
@@ -245,6 +245,13 @@
                             <div class="col-md-4 mb-3">
                                 <label for="submitter_lastname">Last name*</label>
                                 <input type="text" class="form-control" id="submitter_lastname" name="submitter_lastname" placeholder="Doe" required>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row form-group">
+                            <div class="col-md-4 mb-3">
+                                <label for="submitter_mail">Email* (will not be made public)</label>
+                                <input type="email" class="form-control" id="submitter_mail" name="submitter_mail" placeholder="janedoe@example.com" required>
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label for="submitter_username">Github Username</label>
@@ -254,10 +261,13 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label for="submitter_mail">Email*</label>
-                            <input type="email" class="form-control" id="submitter_mail" name="submitter_mail" placeholder="janedoe@example.com" required>
+                        <br>
+                        <div class="checkbox">
+                            <label>
+                              <input type="checkbox" required> By submitting your data, you agree to make it publicly available under the Creative Commons Attribution 4.0 International license (CC-BY 4.0) in the <a href="https://github.com/EMPD2/EMPD-data" title="Github repository for the EMPD">EMPD-data repository on Github</a>. Please review the <a href="https://github.com/EMPD2/EMPD-data/blob/master/LICENSE" title="CC BY 4.0 LICENSE of the EMPD-data repository">license file</a> for further information. Furthermore you agree that your first and last name, as well as the Github username (if provided) are made public in the corresponding pull request.*
+                            </label>
                         </div>
+                        </br>
                          <button class="btn btn-primary" type="submit" id="btn-submit">Submit</button>
                     </form>
                     <div class="alert alert-info" role="alert" id="submit-info">Please be patient, we are just dealing with your data. This may take one or two minutes and you should receive an email.</div>
