@@ -90,6 +90,7 @@ $(document).ready(function() {
       d.Latitude = +d.Latitude;
       d.Selected = false;
       d.Edited = false;
+      d.ispercent = d.ispercent.toLowerCase().startsWith('f') ? false : true; 
 
     // Limit latitudes according to latitude map range (-85:85)
       if (d.Latitude < -85) d.Latitude = -85;
