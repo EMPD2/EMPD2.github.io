@@ -69,7 +69,7 @@ $(document).ready(function() {
   user_meta_file = urlParams.get('meta');
 
   data_repo = user_repo ? user_repo : 'EMPD2/EMPD-data';
-  meta_file = user_meta_file ? user_meta_file : 'meta.tsv'
+  meta_file = user_meta_file ? user_meta_file : meta_file
 
   if (user_commit) {
       repo_url = 'https://raw.githubusercontent.com/' + data_repo + '/' + user_commit + '/';
@@ -338,7 +338,6 @@ $(document).ready(function() {
             }));
 
     Promise.all(promises).then(function(res) {
-        console.log(defaultEditorProperties);
         var editor_element = document.getElementById('editor_holder');
 
         var editor_schema = {
@@ -949,85 +948,36 @@ function initCrossfilter(data) {
   format1 = d3.format(".0f");
   format2 = d3.format(".2f");
 
+  var  all_columns = Object.keys(data[0]);
+  var exclude = ["Selected", "Id", "Edited"];
+
+  var columns = all_columns.filter(s => exclude.indexOf(s) === -1);
+
+  var colFuncs = [
+      d => d.Selected ? "<input type='checkbox' checked>" : "<input type='checkbox'>",
+      d => d.Id,
+  ];
+
+  columns.forEach(function(column) {
+          document.getElementById("meta-table-head").innerHTML += (
+              '<th class="th_MetaColumn">' + column + '</th>'
+          )
+          if (column.search("DOI") !== -1) {
+              colFuncs.push(function (d) {return DOILink(d[column]);});
+          } else if (column.search("Email") !== -1) {
+              colFuncs.push(function(d) {return mailLink(d.SampleName, d[column], d[column]);});
+          } else {
+              colFuncs.push(function(d) {return d[column];});
+          };
+  });
+
   dataTable
     .dimension(tableDim)
     .group(function(d) {})
     .showGroups(false)
     .size(Infinity)
     // .size(xf.size()) //display all data
-    .columns([
-      d => d.Selected ? "<input type='checkbox' checked>" : "<input type='checkbox'>",
-      d => d.Id ,
-      d => d.SampleName,
-      d => d.OriginalSampleName,
-      d => d.SiteName,
-      d => d.Country,
-      d => d.Longitude,
-      d => d.Latitude,
-      d => d.Elevation,
-      d => d.LocationReliability,
-      d => d.LocationNotes,
-      d => d.AreaOfSite,
-      d => d.SampleContext,
-      d => d.SiteDescription,
-      d => d.VegDescription,
-      d => d.SampleType,
-      d => d.SampleMethod,
-      d => d.AgeBP,
-      d => d.AgeUncertainty,
-      d => d.ispercent,
-      d => d.Notes,
-      d => d.Publication1,
-      d => DOILink(d.DOI1),
-      d => d.Publication2,
-      d => DOILink(d.DOI2),
-      d => d.Publication3,
-      d => DOILink(d.DOI3),
-      d => d.Publication4,
-      d => DOILink(d.DOI4),
-      d => d.Publication5,
-      d => DOILink(d.DOI5),
-      d => d.Worker1_Role,
-      d => d.Worker1_LastName,
-      d => d.Worker1_Initials,
-      d => d.Worker1_FirstName,
-      d => d.Worker1_Address1,
-      d => d.Worker1_Address2,
-      d => mailLink(d.SampleName, d.Worker1_Email1, d.Worker1_Email1),
-      d => mailLink(d.SampleName, d.Worker1_Email2, d.Worker1_Email2),
-      d => d.Worker1_Phone1,
-      d => d.Worker1_Phone2,
-      d => d.Worker2_Role,
-      d => d.Worker2_LastName,
-      d => d.Worker2_Initials,
-      d => d.Worker2_FirstName,
-      d => d.Worker2_Address1,
-      d => d.Worker2_Address2,
-      d => mailLink(d.SampleName, d.Worker2_Email1, d.Worker2_Email1),
-      d => mailLink(d.SampleName, d.Worker2_Email2, d.Worker2_Email2),
-      d => d.Worker2_Phone1,
-      d => d.Worker2_Phone2,
-      d => d.Worker3_Role,
-      d => d.Worker3_LastName,
-      d => d.Worker3_Initials,
-      d => d.Worker3_FirstName,
-      d => d.Worker3_Address1,
-      d => d.Worker3_Address2,
-      d => mailLink(d.SampleName, d.Worker3_Email1, d.Worker3_Email1),
-      d => mailLink(d.SampleName, d.Worker3_Email2, d.Worker3_Email2),
-      d => d.Worker3_Phone1,
-      d => d.Worker3_Phone2,
-      d => d.Worker4_Role,
-      d => d.Worker4_LastName,
-      d => d.Worker4_Initials,
-      d => d.Worker4_FirstName,
-      d => d.Worker4_Address1,
-      d => d.Worker4_Address2,
-      d => mailLink(d.SampleName, d.Worker4_Email1, d.Worker4_Email1),
-      d => mailLink(d.SampleName, d.Worker4_Email2, d.Worker4_Email2),
-      d => d.Worker4_Phone1,
-      d => d.Worker4_Phone2
-    ])
+    .columns(colFuncs)
     .sortBy(function(d){ return +d.Id; })
     .order(d3.ascending)
     .on('preRender', update_offset)
@@ -1080,30 +1030,6 @@ function resetTable() {
   dc.redrawAll();
   // make reset link invisible
   d3.select("#resetTableLink").style("display", "none");
-}
-
-function submitData() {
-    if (document.getElementById('submit-form').checkValidity()) {
-        // grecaptcha.ready(function() {
-        //     grecaptcha.execute('6LflGpsUAAAAAKhm3e-A5q30qh1099ZZeF884Vld',{action: 'homepage'}).then(
-        //         function(token) {
-        //
-        //         });
-        // });
-        var payload = {};
-        var form = document.forms['submit-form'];
-        for (var key in form) {
-            console.log(key);
-        }
-
-        // for (var i = 0; i < x.length; i++) {
-        //
-        // $.post('https://still-dusk-71857.herokuapp.com/empd-viewer/hook ',
-        //     {
-        //
-        //     },
-        //     function(data, status){console.log(data); console.log(status);});
-    }
 }
 
 // reset all except mapChart

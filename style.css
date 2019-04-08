@@ -132,13 +132,13 @@ div.scroll {
 
 #chart-table tbody {
   display: block;
-  width:10000px;
+  width:12000px;
   height: 400px;
   overflow-y: auto;
 }
 
 #chart-table thead {
-  width:10000px;
+  width:12000px;
 }
 
 #chart-table>thead>tr>th, #chart-table>tbody>tr>td {
@@ -156,77 +156,10 @@ div.scroll {
   padding: 0px;
 }
 
+
+#chart-table .th_MetaColumn , #chart-table .dc-table-column { width: 140px;  text-align: right; padding-right: 5px; }
 #chart-table .th_Sel , #chart-table .dc-table-column._0 { width: 50px;  text-align: right; padding-right: 5px; }
 #chart-table .th_Id , #chart-table .dc-table-column._1 { width: 50px;  text-align: right; padding-right: 5px; }
-#chart-table .th_SampleName , #chart-table .dc-table-column._2 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_OriginalSampleName , #chart-table .dc-table-column._3 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_SiteName , #chart-table .dc-table-column._4 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Country , #chart-table .dc-table-column._5 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Longitude , #chart-table .dc-table-column._6 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Latitude , #chart-table .dc-table-column._7 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Elevation , #chart-table .dc-table-column._8 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_LocationReliability , #chart-table .dc-table-column._9 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_LocationNotes , #chart-table .dc-table-column._10 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_AreaOfSite , #chart-table .dc-table-column._11 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_SampleContext , #chart-table .dc-table-column._12 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_SiteDescription , #chart-table .dc-table-column._13 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_VegDescription , #chart-table .dc-table-column._14 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_SampleType , #chart-table .dc-table-column._15 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_SampleMethod , #chart-table .dc-table-column._16 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_AgeBP , #chart-table .dc-table-column._17 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_AgeUncertainty , #chart-table .dc-table-column._18 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_ispercent , #chart-table .dc-table-column._19 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Notes , #chart-table .dc-table-column._20 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Publication1 , #chart-table .dc-table-column._21 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_DOI1 , #chart-table .dc-table-column._22 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Publication2 , #chart-table .dc-table-column._23 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_DOI2 , #chart-table .dc-table-column._24 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Publication3 , #chart-table .dc-table-column._25 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_DOI3 , #chart-table .dc-table-column._26 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Publication4 , #chart-table .dc-table-column._27 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_DOI4 , #chart-table .dc-table-column._28 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Publication5 , #chart-table .dc-table-column._29 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_DOI5 , #chart-table .dc-table-column._30 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker1_Role , #chart-table .dc-table-column._31 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker1_LastName , #chart-table .dc-table-column._32 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker1_Initials , #chart-table .dc-table-column._33 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker1_FirstName , #chart-table .dc-table-column._34 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker1_Address1 , #chart-table .dc-table-column._35 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker1_Address2 , #chart-table .dc-table-column._36 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker1_Email1 , #chart-table .dc-table-column._37 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker1_Email2 , #chart-table .dc-table-column._38 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker1_Phone1 , #chart-table .dc-table-column._39 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker1_Phone2 , #chart-table .dc-table-column._40 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker2_Role , #chart-table .dc-table-column._41 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker2_LastName , #chart-table .dc-table-column._42 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker2_Initials , #chart-table .dc-table-column._43 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker2_FirstName , #chart-table .dc-table-column._44 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker2_Address1 , #chart-table .dc-table-column._45 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker2_Address2 , #chart-table .dc-table-column._46 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker2_Email1 , #chart-table .dc-table-column._47 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker2_Email2 , #chart-table .dc-table-column._48 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker2_Phone1 , #chart-table .dc-table-column._49 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker2_Phone2 , #chart-table .dc-table-column._50 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker3_Role , #chart-table .dc-table-column._51 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker3_LastName , #chart-table .dc-table-column._52 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker3_Initials , #chart-table .dc-table-column._53 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker3_FirstName , #chart-table .dc-table-column._54 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker3_Address1 , #chart-table .dc-table-column._55 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker3_Address2 , #chart-table .dc-table-column._56 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker3_Email1 , #chart-table .dc-table-column._57 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker3_Email2 , #chart-table .dc-table-column._58 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker3_Phone1 , #chart-table .dc-table-column._59 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker3_Phone2 , #chart-table .dc-table-column._60 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker4_Role , #chart-table .dc-table-column._61 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker4_LastName , #chart-table .dc-table-column._62 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker4_Initials , #chart-table .dc-table-column._63 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker4_FirstName , #chart-table .dc-table-column._64 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker4_Address1 , #chart-table .dc-table-column._65 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker4_Address2 , #chart-table .dc-table-column._66 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker4_Email1 , #chart-table .dc-table-column._67 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker4_Email2 , #chart-table .dc-table-column._68 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker4_Phone1 , #chart-table .dc-table-column._69 { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Worker4_Phone2 , #chart-table .dc-table-column._70 { width: 140px;  text-align: right; padding-right: 5px; }
 
 #chart-table .dc-table-column  {
   overflow: hidden;
