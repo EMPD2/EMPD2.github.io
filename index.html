@@ -127,10 +127,15 @@
     <br>
         <div class='row' id='editor-row'>
             <ul class="nav nav-tabs" role="tablist" id="meta-tabs">
-                <li role="presentation" class="active"><a href="#meta-table" aria-controls="editor_holder" role="tab" data-toggle="tab">Meta data table</a></li>
-                <li role="presentation"><a href="#pollen-plot" aria-controls="submit" role="tab" data-toggle="tab">Pollen data</a></li>
-                <li role="presentation"><a href="#meta-editor" aria-controls="submit" role="tab" data-toggle="tab">Edit Meta data</a></li>
-                <li role="presentation"><a href="#meta-submit" aria-controls="submit" role="tab" data-toggle="tab">Submit changes to Github</a></li>
+                <li role="presentation" aria-controls="meta-table" class="active"><a href="#meta-table" role="tab" data-toggle="tab">Meta data table</a></li>
+
+                <li role="presentation"><a href="#filters-tab" aria-controls="filters-tab" role="tab" data-toggle="tab">Filters</a></li>
+
+                <li role="presentation"><a href="#pollen-plot" aria-controls="pollen-plot" role="tab" data-toggle="tab">Pollen data</a></li>
+
+                <li role="presentation"><a href="#meta-editor" aria-controls="meta-editor" role="tab" data-toggle="tab">Edit Meta data</a></li>
+
+                <li role="presentation"><a href="#meta-submit" aria-controls="meta-submit" role="tab" data-toggle="tab">Submit changes to Github</a></li>
             </ul>
             <div class="tab-content">
                 <div role="tabpanel" class="tab-pane active" id="meta-table">
@@ -150,6 +155,56 @@
                         <input id="prev-table-page" class="btn" type="Button" value="Previous" onclick="javascript:prev_table_page()" />
                         <input id="next-table-page" class="btn" type="button" value="Next" onclick="javascript:next_table_page()"/>
                      </div>
+                </div>
+
+                <div role="tabpanel" class="tab-pane" id="filters-tab">
+                    <div class="row">
+                        <div class="col-xs-2" id="country-filter">
+                          <div>
+                            Country: <a class='reset'
+                               href='javascript:countryMenu.filterAll();dc.redrawAll();'
+                               style='visibility: hidden;'>reset</a>
+                          </div>
+                        </div>
+
+                        <div class="col-xs-2" id="samplecontext-filter">
+                          <div>
+                            Sample context: <a class='reset'
+                               href='javascript:sampleContextMenu.filterAll();dc.redrawAll();'
+                               style='visibility: hidden;'>reset</a>
+                          </div>
+                        </div>
+
+                        <div class="col-xs-2" id="sampletype-filter">
+                          <div>
+                            Sample type: <a class='reset'
+                               href='javascript:sampleTypeMenu.filterAll();dc.redrawAll();'
+                               style='visibility: hidden;'>reset</a>
+                          </div>
+                        </div>
+
+                        <div class="col-xs-2" id="samplemethod-filter">
+                          <div>
+                            Sample method: <a class='reset'
+                               href='javascript:sampleMethodMenu.filterAll();dc.redrawAll();'
+                               style='visibility: hidden;'>reset</a>
+                          </div>
+                        </div>
+
+                        <div class="col-xs-2" id="age-chart">
+                           <div class="dc-chart-title">
+                               Age uncertainty:
+                               <a class="reset" href="javascript:ageChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+                           </div>
+                        </div>
+
+                        <div class="col-xs-2" id="location-chart">
+                           <div class="dc-chart-title">
+                               Location uncertainty:
+                               <a class="reset" href="javascript:locationChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+                           </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div role="tabpanel" class="tab-pane" id="pollen-plot">

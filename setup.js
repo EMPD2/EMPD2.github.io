@@ -4,14 +4,14 @@ var theMap;
 var mapMaxZoom = 15;
 
 var xf;
-var nsamplesDim;
-var nsamplesGroup;
+
+var workerDim;
+var sampleNameDim;
+var countryDim;
+var sampleContextDim;
+var sampleTypeDim;
 var ageDim;
-var ageGroup;
-var originDim;
-var originGroup;
-var materialDim;
-var materialGroup;
+var locationDim;
 
 var editor;
 
@@ -20,9 +20,6 @@ var displayedData = {};
 
 var select1;
 var select2;
-
-var workerDim;
-var sampleNameDim;
 
 var imgMarker = 'img/marker.png',
     imgMarkerHighlight = 'img/marker_highlight.png';
@@ -90,7 +87,7 @@ $(document).ready(function() {
       d.Latitude = +d.Latitude;
       d.Selected = false;
       d.Edited = false;
-      d.ispercent = d.ispercent.toLowerCase().startsWith('f') ? false : true; 
+      d.ispercent = d.ispercent.toLowerCase().startsWith('f') ? false : true;
 
     // Limit latitudes according to latitude map range (-85:85)
       if (d.Latitude < -85) d.Latitude = -85;
@@ -804,7 +801,37 @@ function initCrossfilter(data) {
   //-----------------------------------
   sampleNameDim = xf.dimension(function(d) {
       return d.SampleName.split("_").slice(0, -1).join(" ");
-  })
+  });
+
+  //-----------------------------------
+  countryDim = xf.dimension(function(d) {
+      return d.Country;
+  });
+
+  //-----------------------------------
+  sampleContextDim = xf.dimension(function(d) {
+      return d.SampleContext ? d.SampleContext : "unspecified";
+  });
+
+  //-----------------------------------
+  sampleTypeDim = xf.dimension(function(d) {
+      return d.SampleType ? d.SampleType : "unspecified";
+  });
+
+  //-----------------------------------
+  sampleMethodDim = xf.dimension(function(d) {
+      return d.SampleMethod ? d.SampleMethod : "unspecified";
+  });
+
+  //-----------------------------------
+  ageDim = xf.dimension(function(d) {
+      return d.AgeUncertainty ? d.AgeUncertainty : "unspecified";
+  });
+
+  //-----------------------------------
+  locationDim = xf.dimension(function(d) {
+      return d.LocationReliability ? d.LocationReliability : "unspecified";
+  });
 
   //-----------------------------------
   workerDim = xf.dimension(function(d) {
@@ -813,7 +840,7 @@ function initCrossfilter(data) {
       if (d.Worker3_LastName != "" && typeof d.Worker3_LastName !== 'undefined') ret.push(d.Worker3_LastName + ', ' + d.Worker3_FirstName);
       if (d.Worker4_LastName != "" && typeof d.Worker4_LastName !== 'undefined') ret.push(d.Worker4_LastName + ', ' + d.Worker4_FirstName);
       return ret
-  }, true)
+  }, true);
 
   //-----------------------------------
   mapDim = xf.dimension(function(d) { return [d.Latitude, d.Longitude, d.Id]; });
@@ -1005,6 +1032,74 @@ function initCrossfilter(data) {
 
     //-----------------------------------
 
+    countryMenu = dc.selectMenu('#country-filter')
+        .dimension(countryDim)
+        .group(countryDim.group())
+        .multiple(true)
+        .numberVisible(10)
+        .controlsUseVisibility(true);
+
+    //-----------------------------------
+
+    sampleContextMenu = dc.selectMenu('#samplecontext-filter')
+        .dimension(sampleContextDim)
+        .group(sampleContextDim.group())
+        .multiple(true)
+        .numberVisible(10)
+        .controlsUseVisibility(true);
+
+    //-----------------------------------
+
+    sampleTypeMenu = dc.selectMenu('#sampletype-filter')
+        .dimension(sampleTypeDim)
+        .group(sampleTypeDim.group())
+        .multiple(true)
+        .numberVisible(10)
+        .controlsUseVisibility(true);
+
+    //-----------------------------------
+
+    sampleMethodMenu = dc.selectMenu('#samplemethod-filter')
+        .dimension(sampleMethodDim)
+        .group(sampleMethodDim.group())
+        .multiple(true)
+        .numberVisible(10)
+        .controlsUseVisibility(true);
+
+    //-----------------------------------
+    var ageColors = d3.scaleOrdinal()
+        .domain(["A", "B", "C", "unspecified"])
+        .range(["#e34a33", Ocean_color, Ferns_color, Unkown_color]);   // http://colorbrewer2.org/
+
+    ageChart  = dc.rowChart("#age-chart");
+
+    ageChart
+        .margins({top: 10, right: 10, bottom: 30, left: 10})
+        .dimension(ageDim)
+        .group(ageDim.group())
+        .colors(ageColors)
+        .elasticX(true)
+        .gap(2)
+        .xAxis().ticks(4);
+
+    //-----------------------------------
+    var locationColors = d3.scaleOrdinal()
+        .domain(["A", "B", "C", "D", "X", "unspecified"])
+        .range(["#e34a33", Ocean_color, Ferns_color, Tree_color, Herbs_color, Unkown_color]);   // http://colorbrewer2.org/
+
+    locationChart  = dc.rowChart("#location-chart");
+
+    locationChart
+        .margins({top: 10, right: 10, bottom: 30, left: 10})
+        .dimension(locationDim)
+        .group(locationDim.group())
+        .colors(locationColors)
+        .elasticX(true)
+        .gap(2)
+        .xAxis().ticks(4);
+
+    //-----------------------------------
+
     select1 = dc.selectMenu('#select1')
         .dimension(sampleNameDim)
         .group(sampleNameDim.group())
@@ -1037,6 +1132,12 @@ function resetTable() {
 function resetAll_exceptMap() {
   select1.filterAll();
   select2.filterAll();
+  countryMenu.filterAll();
+  sampleContextMenu.filterAll();
+  sampleTypeMenu.filterAll();
+  sampleMethodMenu.filterAll();
+  ageChart.filterAll();
+  locationChart.filterAll();
   // versionChart.filterAll();
   resetTable();
   dc.redrawAll();
