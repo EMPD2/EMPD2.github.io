@@ -191,18 +191,42 @@
                           </div>
                         </div>
 
-                        <div class="col-xs-2" id="age-chart">
+                        <div class="dc-chart col-xs-2" id="age-chart">
                            <div class="dc-chart-title">
                                Age uncertainty:
                                <a class="reset" href="javascript:ageChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
                            </div>
                         </div>
 
-                        <div class="col-xs-2" id="location-chart">
+                        <div class="dc-chart col-xs-2" id="location-chart">
                            <div class="dc-chart-title">
                                Location uncertainty:
                                <a class="reset" href="javascript:locationChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
                            </div>
+                        </div>
+
+                        <div class="dc-chart col-xs-2" id="chart-temperature">
+                            <div class="dc-chart-title" id="temperature-title">DJF Temperature</div>
+                            <br>
+                            <a class="reset" href="javascript:temperatureChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+                            <a class="preset" href="javascript:changeTemperatureChart(0);" title="Winter">DJF</a>
+                            <a class="preset" href="javascript:changeTemperatureChart(1);" title="Spring">MAM</a>
+                            <a class="preset" href="javascript:changeTemperatureChart(2);" title="Summer">JJA</a>
+                            <a class="preset" href="javascript:changeTemperatureChart(3);" title="Automn">SON</a>
+                            <a class="preset" href="javascript:changeTemperatureChart(4);" title="Annual">Annual</a>
+                            <span class="reset" style="display: none;"><span class="filter"></span></span>
+                        </div>
+
+                        <div class="dc-chart col-xs-2" id="chart-precip">
+                            <div class="dc-chart-title" id="precip-title">DJF Precipitation</div>
+                            <br>
+                            <a class="reset" href="javascript:precipChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+                            <a class="preset" href="javascript:changePrecipChart(0);" title="Winter">DJF</a>
+                            <a class="preset" href="javascript:changePrecipChart(1);" title="Spring">MAM</a>
+                            <a class="preset" href="javascript:changePrecipChart(2);" title="Summer">JJA</a>
+                            <a class="preset" href="javascript:changePrecipChart(3);" title="Automn">SON</a>
+                            <a class="preset" href="javascript:changePrecipChart(4);" title="Annual">Annual</a>
+                            <span class="reset" style="display: none;"><span class="filter"></span></span>
                         </div>
                     </div>
                 </div>

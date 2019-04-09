@@ -12,6 +12,17 @@ var sampleContextDim;
 var sampleTypeDim;
 var ageDim;
 var locationDim;
+var temperatureDims;
+var temperatureGroups;
+var precipDims;
+var precipGroups;
+
+var temperatureRange, temperatureBinWidth;
+var precipRange, precipBinWidth;
+
+var monthsSeasons = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug',
+                     'Sep', 'Oct', 'Nov', 'Dec', 'DJF', 'MAM', 'JJA', 'SON', 'Ann'];
+
 
 var editor;
 
@@ -87,6 +98,9 @@ $(document).ready(function() {
       d.Latitude = +d.Latitude;
       d.Selected = false;
       d.Edited = false;
+      d.Temperature = $.map(d.Temperature.split(","), v => parseFloat(v) || NaN);
+      d.Precipitation = d.Precipitation.split(",").map(
+          (v, i) => i < 12 ? parseFloat(v) : (i < 17 ? parseFloat(v) / 3 : parseFloat(v) / 12) || NaN);
       d.ispercent = d.ispercent.toLowerCase().startsWith('f') ? false : true;
 
     // Limit latitudes according to latitude map range (-85:85)
@@ -843,6 +857,40 @@ function initCrossfilter(data) {
   }, true);
 
   //-----------------------------------
+  temperatureRange = [-20, 40.];
+  temperatureBinWidth = 2.;
+  temperatureDims = [];
+  temperatureGroups = [];
+  for (var i = 12; i < monthsSeasons.length; i++) {
+      var temperatureDim = xf.dimension( function(d) {
+        	// Threshold
+        	var temperatureThresholded = d.Temperature[i];
+        	if (temperatureThresholded <= temperatureRange[0]) temperatureThresholded = temperatureRange[0];
+        	if (temperatureThresholded >= temperatureRange[1]) temperatureThresholded = temperatureRange[1] - temperatureBinWidth;
+        	return temperatureBinWidth*Math.floor(temperatureThresholded/temperatureBinWidth);
+        });
+      temperatureDims.push(temperatureDim);
+      temperatureGroups.push(temperatureDim.group());
+  };
+
+  //-----------------------------------
+  precipRange = [0, 150.];
+  precipBinWidth = 1;
+  precipDims = [];
+  precipGroups = [];
+  for (i = 12; i < monthsSeasons.length; i++) {
+      var precipDim = xf.dimension( function(d) {
+          // Threshold
+          var precipThresholded = d.Precipitation[i];
+          if (precipThresholded <= precipRange[0]) precipThresholded = precipRange[0];
+          if (precipThresholded >= precipRange[1]) precipThresholded = precipRange[1] - precipBinWidth;
+          return precipBinWidth*Math.floor(precipThresholded/precipBinWidth);
+        });
+      precipDims.push(precipDim);
+      precipGroups.push(precipDim.group());
+  };
+
+  //-----------------------------------
   mapDim = xf.dimension(function(d) { return [d.Latitude, d.Longitude, d.Id]; });
   mapGroup = mapDim.group();
 
@@ -1115,10 +1163,74 @@ function initCrossfilter(data) {
         .numberVisible(10)
         .controlsUseVisibility(true);
 
+    //-----------------------------------
+    temperatureChart  = dc.barChart("#chart-temperature");
+
+    temperatureChart
+        .width("300")
+        .margins({top: 10, right: 20, bottom: 30, left: 40})
+        .xAxisLabel("Temperature")
+        .yAxisLabel("Entities")
+        .centerBar(false)
+        .elasticY(true)
+        .dimension(temperatureDims[0])
+        .group(temperatureGroups[0])
+        .x(d3.scaleLinear().domain(temperatureRange))
+        .xUnits(dc.units.fp.precision(temperatureBinWidth))
+        .round(function(d) {return temperatureBinWidth*Math.floor(d/temperatureBinWidth)})
+        .gap(0)
+        .renderHorizontalGridLines(true)
+        .colors("FireBrick");
+
+    //-----------------------------------
+    precipChart  = dc.barChart("#chart-precip");
+
+    precipChart
+        .width("300")
+        .margins({top: 10, right: 20, bottom: 30, left: 40})
+        .xAxisLabel("Precipitation [mm]")
+        .yAxisLabel("Entities")
+        .centerBar(false)
+        .elasticY(true)
+        .dimension(precipDims[0])
+        .group(precipGroups[0])
+        .x(d3.scaleLinear().domain(precipRange))
+        .xUnits(dc.units.fp.precision(precipBinWidth))
+        .round(function(d) {return precipBinWidth*Math.floor(d/precipBinWidth)})
+        .gap(0)
+        .renderHorizontalGridLines(true)
+        .colors(Ocean_color);
+
   //-----------------------------------
   dc.renderAll();
 
 }
+
+// ====================================
+// Functions to change the displayed content
+
+function changeTemperatureChart(what) {
+    var temperatureFilters = temperatureChart.filters();
+    temperatureChart.filter(null);
+    temperatureChart.dimension(temperatureDims[what]);
+    temperatureChart.group(temperatureGroups[what]);
+    document.getElementById("temperature-title").innerHTML = monthsSeasons[what + 12] + " Temperature";
+    temperatureChart.filter([temperatureFilters]);
+    dc.redrawAll();
+}
+
+function changePrecipChart(what) {
+    var precipFilters = precipChart.filters();
+    precipChart.filter(null);
+    precipChart.dimension(precipDims[what]);
+    precipChart.group(precipGroups[what]);
+    document.getElementById("temperature-title").innerHTML = monthsSeasons[what] + " Precipitation";
+    precipChart.filter([precipFilters]);
+    dc.redrawAll();
+}
+
+// ====================================
+// Functions to reset the cross filter
 
 // reset dataTable
 function resetTable() {
