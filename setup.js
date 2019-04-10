@@ -67,7 +67,7 @@ var groupColors = {
     "Aquatics": Ocean_color
 }
 
-var defaultEditorProperties = {}
+var defaultEditorProperties = {"Id": {"type": "integer", "required": true}}
 
 var diagramJSON = {};
 
@@ -391,13 +391,16 @@ $(document).ready(function() {
                 else {
                     var value = editor.getValue();
                     var i = +value.Id - 1;
+                    Object.keys(value).forEach(
+                        function(key) {data[i][key] = value[key];}
+                    );
                     var selected = value.Selected;
 
-                    value = parseMeta(value, i);
+                    value = parseMeta(data[i], i);
 
                     value.Selected = selected;
                     value["Edited"] = true;
-                    data[value.Id - 1] = value;
+                    data[i] = value;
                     mapMarkers[value.Id - 1]._popup.setContent(getPopupContent(value));
                     resetData(value);
                 }
@@ -907,9 +910,13 @@ function parseMeta(d, i) {
     d.Latitude = +d.Latitude;
     d.Selected = false;
     d.Edited = false;
-    d.Temperature = $.map(d.Temperature.replace('[', '').replace(']', '').split(","), v => parseFloat(v) || NaN);
-    d.Precipitation = d.Precipitation.replace('[', '').replace(']', '').split(",").map(
+    if (typeof(d.Temperature.replace) !== 'undefined') {
+        d.Temperature = $.map(d.Temperature.replace('[', '').replace(']', '').split(","), v => parseFloat(v) || NaN);
+    };
+    if (typeof(d.Precipitation.replace) !== 'undefined') {
+        d.Precipitation = d.Precipitation.replace('[', '').replace(']', '').split(",").map(
         (v, i) => i < 12 ? parseFloat(v) : (i < 16 ? parseFloat(v) / 3 : parseFloat(v) / 12) || NaN);
+    };
 
     if (typeof(d.ispercent) !== typeof(true)) {
         d.ispercent = d.ispercent.toLowerCase().startsWith('f') ? false : true;
