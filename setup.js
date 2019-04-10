@@ -5,17 +5,38 @@ var mapMaxZoom = 15;
 
 var xf;
 
-var workerDim;
-var sampleNameDim;
-var countryDim;
-var sampleContextDim;
-var sampleTypeDim;
-var ageDim;
-var locationDim;
-var temperatureDims;
-var temperatureGroups;
-var precipDims;
-var precipGroups;
+var workerDim,
+    sampleNameDim,
+    countryDim,
+    sampleContextDim,
+    sampleTypeDim,
+    sampleMethodDim,
+    okexceptDim,
+    ageDim,
+    locationDim,
+    temperatureDims,
+    precipDims;
+
+var temperatureGroups,
+    precipGroups;
+
+var dataTable,
+    mapChart,
+    versionChart,
+    countryMenu,
+    sampleContextMenu,
+    sampleTypeMenu,
+    sampleMethodMenu,
+    ageChart,
+    locationChart,
+    select1,
+    select2,
+    temperatureChart,
+    precipChart,
+    okexceptMenu;
+
+// all charts except the map
+var allCharts = []
 
 var temperatureRange, temperatureBinWidth;
 var precipRange, precipBinWidth;
@@ -28,9 +49,6 @@ var editor;
 
 var displayedId = -1;
 var displayedData = {};
-
-var select1;
-var select2;
 
 var imgMarker = 'img/marker.png',
     imgMarkerHighlight = 'img/marker_highlight.png';
@@ -1071,6 +1089,11 @@ function initCrossfilter(data) {
   });
 
   //-----------------------------------
+  okexceptDim = xf.dimension(function(d) {
+      return d.okexcept ? d.okexcept.split(',') : ["nothing"];
+  }, true);
+
+  //-----------------------------------
   ageDim = xf.dimension(function(d) {
       return d.AgeUncertainty ? d.AgeUncertainty : "unspecified";
   });
@@ -1401,9 +1424,22 @@ function initCrossfilter(data) {
         .renderHorizontalGridLines(true)
         .colors(Ocean_color);
 
+    //-----------------------------------
+
+    okexceptMenu = dc.selectMenu('#okexcept-filter')
+        .dimension(okexceptDim)
+        .group(okexceptDim.group())
+        .multiple(true)
+        .numberVisible(10)
+        .controlsUseVisibility(true);
+
+    allCharts = [
+        dataTable, versionChart, countryMenu, sampleContextMenu,
+        sampleTypeMenu, sampleMethodMenu, ageChart, locationChart, select1,
+        select2, temperatureChart, precipChart, okexceptMenu];
+
   //-----------------------------------
   dc.renderAll();
-
 }
 
 // ====================================
@@ -1433,10 +1469,6 @@ function changePrecipChart(what) {
 // Functions to reset the cross filter
 
 function resetData(data) {
-    var allCharts = [
-        select1, select2, countryMenu, sampleContextMenu, sampleTypeMenu,
-        sampleMethodMenu, ageChart, locationChart, temperatureChart,
-        precipChart, dataTable];
 
     var allFilters = allCharts.map(chart => chart.filters());
 
