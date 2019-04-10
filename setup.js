@@ -1091,7 +1091,7 @@ function initCrossfilter(data) {
 
   //-----------------------------------
   okexceptDim = xf.dimension(function(d) {
-      return d.okexcept ? d.okexcept.split(',') : ["nothing"];
+      return d.okexcept ? d.okexcept.split(',') : ["None"];
   }, true);
 
   //-----------------------------------
