@@ -429,8 +429,8 @@ $(document).ready(function() {
                     $("#submit-info").show();
                     formData["token"] = token;
                     $.post(form.attr('action'), JSON.stringify(formData)).then(
-                        function(data, status) {
-                            $("#submit-successed").html(status + ": " + data);
+                        function(result, status) {
+                            $("#submit-successed").html(status + ": " + result);
                             data.forEach(function (d) {d.Edited = False;});
                             $("#submit-info").hide();
                             $("#submit-failed").hide();
