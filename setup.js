@@ -42,8 +42,6 @@ var Trees_color = Tree_color;
 var Herbs_color = "#ff7f50";
 var Unkown_color = "#FF4400";
 
-var blockMetaTable = false;
-
 var groupColors = {
     "Trees & Shrubs": Trees_color,
     "Herbs": Herbs_color,
@@ -92,25 +90,7 @@ $(document).ready(function() {
       user_branch = 'master';
   }
 
-  d3.tsv(repo_url + meta_file, function(d,i) {
-      d.Id = i+1;
-      d.Longitude = +d.Longitude;
-      d.Latitude = +d.Latitude;
-      d.Selected = false;
-      d.Edited = false;
-      d.Temperature = $.map(d.Temperature.split(","), v => parseFloat(v) || NaN);
-      d.Precipitation = d.Precipitation.split(",").map(
-          (v, i) => i < 12 ? parseFloat(v) : (i < 16 ? parseFloat(v) / 3 : parseFloat(v) / 12) || NaN);
-      d.ispercent = d.ispercent.toLowerCase().startsWith('f') ? false : true;
-
-    // Limit latitudes according to latitude map range (-85:85)
-      if (d.Latitude < -85) d.Latitude = -85;
-      if (d.Latitude > 85) d.Latitude = 85;
-      for (var key in d) {
-          d[key] = typeof d[key] !== 'undefined' ? d[key] : '';
-      }
-      return d;
-  }).then(function(data){
+  d3.tsv(repo_url + meta_file, parseMeta).then(function(data){
 
     initCrossfilter(data);
 
@@ -204,7 +184,6 @@ $(document).ready(function() {
         var pollenData = [];
         d3.tsv(repo_url + 'samples/' + data[Id].SampleName + '.tsv').then(function(taxa_data) {
 
-            blockMetaTable = true;
             activeTab = $('#climate-plot').hasClass("active") ? "climate-plot" : "pollen-plot";
 
             document.getElementById("pollen-diagram").innerHTML = "<svg/>";
@@ -227,7 +206,6 @@ $(document).ready(function() {
         if (editor.root.collapsed == false) {
             editor.root.toggle_button.click();
         }
-        blockMetaTable = false;
         displayedId = -1;
         displayedData = {};
         highlightDisplayed();
@@ -261,7 +239,7 @@ $(document).ready(function() {
       childMarkers = a.layer.getAllChildMarkers();
       childMarkersIds = childMarkers.map(function(obj) {return obj.key[2]}).sort();
 
-      if (!blockMetaTable) {
+      if ($('#meta-table').hasClass("active")) {
           childMarkersIds.forEach(function(Id, i) {
           	d3.selectAll(".dc-table-column._1")
           		.text(function (d) {
@@ -273,7 +251,7 @@ $(document).ready(function() {
           	     		return d.Id;
                   	});
           });
-      }
+      };
     });
     markers.on('clustermouseout', function (a) {
       highlightDisplayed();
@@ -394,8 +372,16 @@ $(document).ready(function() {
                 }
                 else {
                     var value = editor.getValue();
+                    var i = +value.Id - 1;
+                    var selected = value.Selected;
+
+                    value = parseMeta(value, i);
+
+                    value.Selected = selected;
                     value["Edited"] = true;
                     data[value.Id - 1] = value;
+                    mapMarkers[value.Id - 1]._popup.setContent(getPopupContent(value));
+                    resetData(value);
                 }
         });
     });
@@ -894,6 +880,71 @@ function plotClimateLegend(elemId) {
         .style("stroke", "black");
 }
 
+// ==================================================================
+
+function parseMeta(d, i) {
+    d.Id = i+1;
+    d.Longitude = +d.Longitude;
+    d.Latitude = +d.Latitude;
+    d.Selected = false;
+    d.Edited = false;
+    d.Temperature = $.map(d.Temperature.replace('[', '').replace(']', '').split(","), v => parseFloat(v) || NaN);
+    d.Precipitation = d.Precipitation.replace('[', '').replace(']', '').split(",").map(
+        (v, i) => i < 12 ? parseFloat(v) : (i < 16 ? parseFloat(v) / 3 : parseFloat(v) / 12) || NaN);
+
+    if (typeof(d.ispercent) !== typeof(true)) {
+        d.ispercent = d.ispercent.toLowerCase().startsWith('f') ? false : true;
+    };
+
+  // Limit latitudes according to latitude map range (-85:85)
+    if (d.Latitude < -85) d.Latitude = -85;
+    if (d.Latitude > 85) d.Latitude = 85;
+    for (var key in d) {
+        d[key] = typeof d[key] !== 'undefined' ? d[key] : '';
+    }
+    return d;
+}
+
+// ==================================================================
+
+function getPopupContent(data) {
+
+    return ('<div class="container" style="width:300px">'
+            + `Sample name: <b>${data.SampleName}</b></br>`
+            + `<b>${data.Country}</b></br></br>`
+            + `Position: <b>${data.Longitude.toFixed(2)} °E</b>, <b>${data.Latitude.toFixed(2)} °N</b> <div class="popuptooltip">(${data.LocationReliability})<span class="tooltiptext">Location reliability</span></div></br>`
+            + `Elevation: <b>${data.Elevation}</b> m a.s.l.</br>`
+            + `Name: <b>${data.SiteName}</b></br>`
+            + (data.SampleType != ""  ? `Sample type: ${data.SampleType} </br>` : "")
+            + (data.SampleContext != ""  ? `Sample context: ${data.SampleContext} </br>` : "")
+            + (data.AgeBP != ""  ? `Age (BP): ${data.AgeBP} </br>` : "")
+            + "</br>"
+            + "Workers: " + workerTooltip(data.Worker1_LastName, data.Worker1_FirstName, data.Worker1_Address1, data.Worker1_Address2, data.Worker1_Email1,  data.Worker1_Email2)
+            + mailLink(data.SampleName, data.Worker1_Email1, " <img src='img/mail.png' style='height:1.1em;' alt='mail'>")
+            + mailLink(data.SampleName, data.Worker1_Email2, " <img src='img/mail.png' style='height:1.1em;' alt='mail'>")
+            + (data.Worker2_LastName != "" ? "; " + workerTooltip(data.Worker2_LastName, data.Worker2_FirstName, data.Worker2_Address1, data.Worker2_Address2, data.Worker2_Email1,  data.Worker2_Email2) : "")
+            + mailLink(data.SampleName, data.Worker2_Email1, " <img src='img/mail.png' style='height:1.1em;' alt='mail'>")
+            + mailLink(data.SampleName, data.Worker2_Email2, " <img src='img/mail.png' style='height:1.1em;' alt='mail'>")
+            + (data.Worker3_LastName != "" ? "; " + workerTooltip(data.Worker3_LastName, data.Worker3_FirstName, data.Worker3_Address1, data.Worker3_Address2, data.Worker3_Email1,  data.Worker3_Email2) : "")
+            + mailLink(data.SampleName, data.Worker3_Email1, " <img src='img/mail.png' style='height:1.1em;' alt='mail'>")
+            + mailLink(data.SampleName, data.Worker3_Email2, " <img src='img/mail.png' style='height:1.1em;' alt='mail'>")
+            + (data.Worker4_LastName != "" ? "; " + workerTooltip(data.Worker4_LastName, data.Worker4_FirstName, data.Worker4_Address1, data.Worker4_Address2, data.Worker4_Email1,  data.Worker4_Email2) : "")
+            + mailLink(data.SampleName, data.Worker4_Email1, " <img src='img/mail.png' style='height:1.1em;' alt='mail'>")
+            + mailLink(data.SampleName, data.Worker4_Email2, " <img src='img/mail.png' style='height:1.1em;' alt='mail'>")
+            + "</br>"
+            + (data.Publication1 != "" ? "<details><summary><b>References...</b></summary><ul><li>" + data.Publication1 + "</li>" : "")
+            + (data.Publication2 != "" ? "<li>" + data.Publication2 + "</li>" : "")
+            + (data.Publication3 != "" ? "<li>" + data.Publication3 + "</li>" : "")
+            + (data.Publication4 != "" ? "<li>" + data.Publication4 + "</li>" : "")
+            + (data.Publication5 != "" ? "<li>" + data.Publication5 + "</li>" : "")
+            + (data.Publication1 != "" ? "</ul></details>": "")
+            + '<input class="btn pull-right" type="image" src="img/cartadd.png" title="Add this sample to the download cart" onclick="javascript:displayedData.Selected=true;dataTable.redraw();" style="height:30px;">'
+            + '<input class="btn pull-right" type="image" src="img/pencil.png" title="Edit the meta information for this sample" onclick="javascript:editDisplayed();" style="height:30px;">'
+            + '</div>');
+}
+
+// ==================================================================
+
 function workerTooltip(last, first, address1, address2, email1, email2) {
     hasTooltip = (address1 != "" || address2 != "" || email1 != "" || email2 != "");
     ret = (hasTooltip ? "<div class='popuptooltip'>" : "");
@@ -1096,7 +1147,7 @@ function initCrossfilter(data) {
   iconAnchor = [16,32];
   popupAnchor = [0,-32];
 
-  mapChart  = dc.leafletMarkerChart("#chart-map");
+  mapChart = dc.leafletMarkerChart("#chart-map");
 
   mapChart
       .width(2000)
@@ -1119,40 +1170,7 @@ function initCrossfilter(data) {
       .popup(function(d,marker) {
 		Id = d.key[2] -1;
   		popup = L.popup({autoPan: false, closeButton: false, maxWidth: 300});
-		popup.setContent(
-                '<div class="container" style="width:300px">'
-                + "Sample name: " + "<b>" + data[Id].SampleName + "</b></br>"
-                + "<b>" + data[Id].Country + "</b></br></br>"
-    			+ "Position: " + "<b>" + data[Id].Longitude.toFixed(2) + "°E</b>, <b>" + data[Id].Latitude.toFixed(2) + '°N</b> <div class="popuptooltip">(' + data[Id].LocationReliability + ')<span class="tooltiptext">Location reliability</span></div></br>'
-                + "Elevation: <b>" + data[Id].Elevation + "</b> m a.s.l.</br>"
-                + "Name: " + "<b>" + data[Id].SiteName + "</b></br>"
-                + (data[Id].SampleType != ""  ? "Sampe type: " + data[Id].SampleType + "</br>" : "")
-                + (data[Id].SampleContext != ""  ? "Sampe context: " + data[Id].SampleContext + "</br>" : "")
-                + (data[Id].AgeBP != ""  ? "Age (BP): " + data[Id].AgeBP + "</br>" : "")
-                + "</br>"
-                + "Workers: " + workerTooltip(data[Id].Worker1_LastName, data[Id].Worker1_FirstName, data[Id].Worker1_Address1, data[Id].Worker1_Address2, data[Id].Worker1_Email1,  data[Id].Worker1_Email2)
-                + mailLink(data[Id].SampleName, data[Id].Worker1_Email1, " <img src='img/mail.png' style='height:1.1em;' alt='mail'>")
-                + mailLink(data[Id].SampleName, data[Id].Worker1_Email2, " <img src='img/mail.png' style='height:1.1em;' alt='mail'>")
-                + (data[Id].Worker2_LastName != "" ? "; " + workerTooltip(data[Id].Worker2_LastName, data[Id].Worker2_FirstName, data[Id].Worker2_Address1, data[Id].Worker2_Address2, data[Id].Worker2_Email1,  data[Id].Worker2_Email2) : "")
-                + mailLink(data[Id].SampleName, data[Id].Worker2_Email1, " <img src='img/mail.png' style='height:1.1em;' alt='mail'>")
-                + mailLink(data[Id].SampleName, data[Id].Worker2_Email2, " <img src='img/mail.png' style='height:1.1em;' alt='mail'>")
-                + (data[Id].Worker3_LastName != "" ? "; " + workerTooltip(data[Id].Worker3_LastName, data[Id].Worker3_FirstName, data[Id].Worker3_Address1, data[Id].Worker3_Address2, data[Id].Worker3_Email1,  data[Id].Worker3_Email2) : "")
-                + mailLink(data[Id].SampleName, data[Id].Worker3_Email1, " <img src='img/mail.png' style='height:1.1em;' alt='mail'>")
-                + mailLink(data[Id].SampleName, data[Id].Worker3_Email2, " <img src='img/mail.png' style='height:1.1em;' alt='mail'>")
-                + (data[Id].Worker4_LastName != "" ? "; " + workerTooltip(data[Id].Worker4_LastName, data[Id].Worker4_FirstName, data[Id].Worker4_Address1, data[Id].Worker4_Address2, data[Id].Worker4_Email1,  data[Id].Worker4_Email2) : "")
-                + mailLink(data[Id].SampleName, data[Id].Worker4_Email1, " <img src='img/mail.png' style='height:1.1em;' alt='mail'>")
-                + mailLink(data[Id].SampleName, data[Id].Worker4_Email2, " <img src='img/mail.png' style='height:1.1em;' alt='mail'>")
-                + "</br>"
-                + (data[Id].Publication1 != "" ? "<details><summary><b>References...</b></summary><ul><li>" + data[Id].Publication1 + "</li>" : "")
-                + (data[Id].Publication2 != "" ? "<li>" + data[Id].Publication2 + "</li>" : "")
-                + (data[Id].Publication3 != "" ? "<li>" + data[Id].Publication3 + "</li>" : "")
-                + (data[Id].Publication4 != "" ? "<li>" + data[Id].Publication4 + "</li>" : "")
-                + (data[Id].Publication5 != "" ? "<li>" + data[Id].Publication5 + "</li>" : "")
-                + (data[Id].Publication1 != "" ? "</ul></details>": "")
-                + '<input class="btn pull-right" type="image" src="img/cartadd.png" title="Add this sample to the download cart" onclick="javascript:displayedData.Selected=true;dataTable.redraw();" style="height:30px;">'
-                + '<input class="btn pull-right" type="image" src="img/pencil.png" title="Edit the meta information for this sample" onclick="javascript:editDisplayed();" style="height:30px;">'
-                + '</div>'
-            );
+		popup.setContent(getPopupContent(data[Id]));
         mapMarkers[Id] = marker;
 
 		return popup;
@@ -1169,7 +1187,7 @@ function initCrossfilter(data) {
 			d3.selectAll(".dc-table-column._1")
 				.text(function (d, i) {
 			     		if (parseInt(d.Id) == e.target.options.Id) {
-                            if (blockMetaTable != true) {
+                            if ($('#meta-table').hasClass("active")) {
                                 $('#meta-tabs a[href="#meta-table"]').tab('show');
         						this.parentNode.scrollIntoView();
 			                 	d3.select(this.parentNode).style("font-weight", "bold");
@@ -1414,6 +1432,31 @@ function changePrecipChart(what) {
 // ====================================
 // Functions to reset the cross filter
 
+function resetData(data) {
+    var allCharts = [
+        select1, select2, countryMenu, sampleContextMenu, sampleTypeMenu,
+        sampleMethodMenu, ageChart, locationChart, temperatureChart,
+        precipChart, dataTable];
+
+    var allFilters = allCharts.map(chart => chart.filters());
+
+    allCharts.forEach(function (c) {c.filter(null);});
+
+    dataTable.filter(data.Id);
+
+    // remove the data and add it again
+    xf.remove();
+    xf.add([data]);
+
+    dataTable.filterAll();
+
+    dataTable.sortBy(d => +d.Id);
+
+    allCharts.forEach(function (c, i) {c.filter([allFilters[i]])});
+
+    dc.redrawAll();
+}
+
 // reset dataTable
 function resetTable() {
   dataTable.filterAll();
@@ -1432,7 +1475,9 @@ function resetAll_exceptMap() {
   sampleMethodMenu.filterAll();
   ageChart.filterAll();
   locationChart.filterAll();
-  // versionChart.filterAll();
+  temperatureChart.filterAll();
+  precipChart.filterAll();
+  versionChart.filterAll();
   resetTable();
   dc.redrawAll();
 }
