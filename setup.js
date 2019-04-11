@@ -63,7 +63,7 @@ var Herbs_color = "#ff7f50";
 var Unkown_color = "#FF4400";
 
 var groupColors = {
-    "Trees & Shrubs": Trees_color,
+    "Trees and shrubs": Trees_color,
     "Herbs": Herbs_color,
     "Ferns": Ferns_color,
     "Aquatics": Ocean_color
@@ -211,8 +211,8 @@ $(document).ready(function() {
             d3.tsv(
                 repo_url + 'samples/' + data[Id].SampleName + '.tsv',
                 function(d) {
-                    d.make_percent = groupInfo[d.GroupID].make_percent;
-                    d.higher_groupname = groupInfo[groupInfo[d.GroupID].higher_groupid].groupname;
+                    d.make_percent = groupInfo[d.groupid].make_percent;
+                    d.higher_groupname = groupInfo[groupInfo[d.groupid].higher_groupid].groupname;
                     d.samplename = data[Id].SampleName;
                     return d
                 }).then(function(taxa_data) {
@@ -721,7 +721,7 @@ function plotPollenLegend(elemId) {
             .style("font-size", "18px")
             .attr("transform", "translate(25, 40)");
 
-    var groups = ["Trees & Shrubs", "Herbs", "Ferns", "Aquatics",
+    var groups = ["Trees and shrubs", "Herbs", "Ferns", "Aquatics",
                   "5-times exaggerated"];
     groups.forEach(function(text, i) {
         g.append("text")
