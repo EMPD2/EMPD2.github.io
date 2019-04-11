@@ -431,7 +431,7 @@ $(document).ready(function() {
                     $.post(form.attr('action'), JSON.stringify(formData)).then(
                         function(result, status) {
                             $("#submit-successed").html(status + ": " + result);
-                            data.forEach(function (d) {d.Edited = False;});
+                            data.forEach(function (d) {d.Edited = false;});
                             $("#submit-info").hide();
                             $("#submit-failed").hide();
                             $("#submit-successed").show();
