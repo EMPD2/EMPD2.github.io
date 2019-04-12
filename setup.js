@@ -751,9 +751,19 @@ function plotPollenLegend(elemId) {
 function plotClimate(data, elemId) {
     //graph code
 
-    var precip = data.Precipitation,
+    var precip = data.Precipitation.slice(),
         temperature = data.Temperature,
         sampleName = data.SampleName;
+
+    for (i = 12; i < monthsSeasons.length; i++) {
+        if (isNaN(precip[i])) {
+            // do nothing
+        } else if (i < monthsSeasons.length - 1) {
+            precip[i] = precip[i] > 0 ? precip[i] / 3. : precip[i]
+        } else {
+            precip[i] = precip[i] > 0 ? precip[i] / 12. : precip[i]
+        }
+    }
 
     var svg = d3.select("#" + elemId).select("svg"),
         margin = {top: 40, right: 80, bottom: 180, left: 40},
@@ -929,8 +939,7 @@ function parseMeta(d, i) {
         d.Temperature = $.map(d.Temperature.replace('[', '').replace(']', '').split(","), v => parseFloat(v) || NaN);
     };
     if (typeof(d.Precipitation.replace) !== 'undefined') {
-        d.Precipitation = d.Precipitation.replace('[', '').replace(']', '').split(",").map(
-        (v, i) => i < 12 ? parseFloat(v) : (i < 16 ? parseFloat(v) / 3 : parseFloat(v) / 12) || NaN);
+        d.Precipitation = $.map(d.Precipitation.replace('[', '').replace(']', '').split(","), v => parseFloat(v) || NaN);
     };
 
     if (typeof(d.ispercent) !== typeof(true)) {
@@ -1153,6 +1162,10 @@ function initCrossfilter(data) {
           var precipThresholded = d.Precipitation[i];
           if (isNaN(precipThresholded)) {
               return Infinity;
+          } else if (i < monthsSeasons.length - 1) {
+              precipThresholded = precipThresholded > 0 ? precipThresholded / 3. : precipThresholded;
+          } else {
+              precipThresholded = precipThresholded > 0 ? precipThresholded / 12. : precipThresholded;
           }
           if (precipThresholded <= precipRange[0]) precipThresholded = precipRange[0];
           if (precipThresholded >= precipRange[1]) precipThresholded = precipRange[1] - precipBinWidth;
@@ -1427,7 +1440,7 @@ function initCrossfilter(data) {
     precipChart
         .width("300")
         .margins({top: 10, right: 20, bottom: 30, left: 40})
-        .xAxisLabel("Precipitation [mm]")
+        .xAxisLabel("Precipitation [mm/month]")
         .yAxisLabel("Entities")
         .centerBar(false)
         .elasticY(true)
