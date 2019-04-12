@@ -1074,19 +1074,6 @@ function initCrossfilter(data) {
   xf = crossfilter(data);
 
   //-----------------------------------
-  nsamplesRange = [0., 200.];
-  nsamplesBinWidth = 10.;
-  nsamplesDim = xf.dimension( function(d) {
-	// Threshold
-	var nsamplesThresholded = d.nsamples;
-    if (d.ismodern == 't') nsamplesThresholded = NaN;
-	if (nsamplesThresholded <= nsamplesRange[0]) nsamplesThresholded = nsamplesRange[0];
-	if (nsamplesThresholded >= nsamplesRange[1]) nsamplesThresholded = nsamplesRange[1] - nsamplesBinWidth;
-	return nsamplesBinWidth*Math.floor(nsamplesThresholded/nsamplesBinWidth);
-      });
-  nsamplesGroup = nsamplesDim.group();
-
-  //-----------------------------------
   sampleNameDim = xf.dimension(function(d) {
       return d.SampleName.split("_").slice(0, -1).join(" ");
   });
@@ -1113,7 +1100,7 @@ function initCrossfilter(data) {
 
   //-----------------------------------
   okexceptDim = xf.dimension(function(d) {
-      return d.okexcept ? d.okexcept.split(',') : ["None"];
+      return d.okexcept ? d.okexcept.split(',').filter(s => s) : ["None"];
   }, true);
 
   //-----------------------------------
@@ -1144,6 +1131,9 @@ function initCrossfilter(data) {
       var temperatureDim = xf.dimension( function(d) {
         	// Threshold
         	var temperatureThresholded = d.Temperature[i];
+            if (isNaN(temperatureThresholded)) {
+                return Infinity;
+            }
         	if (temperatureThresholded <= temperatureRange[0]) temperatureThresholded = temperatureRange[0];
         	if (temperatureThresholded >= temperatureRange[1]) temperatureThresholded = temperatureRange[1] - temperatureBinWidth;
         	return temperatureBinWidth*Math.floor(temperatureThresholded/temperatureBinWidth);
@@ -1161,6 +1151,9 @@ function initCrossfilter(data) {
       var precipDim = xf.dimension( function(d) {
           // Threshold
           var precipThresholded = d.Precipitation[i];
+          if (isNaN(precipThresholded)) {
+              return Infinity;
+          }
           if (precipThresholded <= precipRange[0]) precipThresholded = precipRange[0];
           if (precipThresholded >= precipRange[1]) precipThresholded = precipRange[1] - precipBinWidth;
           return precipBinWidth*Math.floor(precipThresholded/precipBinWidth);
@@ -1495,15 +1488,11 @@ function resetData(data) {
 
     var allFilters = allCharts.map(chart => chart.filters());
 
-    allCharts.forEach(function (c) {c.filter(null);});
-
-    dataTable.filter(data.Id);
+    allCharts.forEach(function (c) {c.filterAll();});
 
     // remove the data and add it again
-    xf.remove();
+    xf.remove(function(d, i) {return d.Id === data.Id;});
     xf.add([data]);
-
-    dataTable.filterAll();
 
     dataTable.sortBy(d => +d.Id);
 
