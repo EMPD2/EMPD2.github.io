@@ -1486,17 +1486,11 @@ function changePrecipChart(what) {
 
 function resetData(data) {
 
-    var allFilters = allCharts.map(chart => chart.filters());
-
-    allCharts.forEach(function (c) {c.filterAll();});
-
     // remove the data and add it again
     xf.remove(function(d, i) {return d.Id === data.Id;});
     xf.add([data]);
 
     dataTable.sortBy(d => +d.Id);
-
-    allCharts.forEach(function (c, i) {c.filter([allFilters[i]])});
 
     dc.redrawAll();
 }
