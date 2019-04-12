@@ -50,6 +50,14 @@
     <link href="style.css" rel="stylesheet" type="text/css">
     <link href="non-responsive.css" rel="stylesheet" type="text/css">
 
+    <style>
+    @media (min-width: 970px) {
+        .mobile-alert {
+            display: none !important;
+        }
+    }
+    </style>
+
   </head>
 
   <body>
@@ -79,12 +87,21 @@
       </div>
 
       <!-- Begin page content -->
-      <div class="container" style="width: 1750px">
-          <noscript>
-              <div class="alert alert-danger" role="alert">
-                This webpage is based on Javascript. To view any of it's content, please enable it! <a href="https://security.stackexchange.com/q/198780">More info...</a>
+      <div class="container">
+          <div class="row">
+              <noscript>
+                  <div class="alert alert-danger" role="alert">
+                    This webpage is based on Javascript. To view any of it's content, please enable it! <a href="https://security.stackexchange.com/q/198780">More info...</a>
+                  </div>
+              </noscript>
+              </br>
+              <div class="alert alert-danger mobile-alert alert-dismissible" role="alert">
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  This webpage is not mobile friendly, sorry. You should open it on a larger screen...
               </div>
-          </noscript>
+          </div>
+      </div>
+      <div class="container" style="width: 1750px">
           <div class="row">
       		<div class='dc-data-count' id='chart-count'>
       			<span class='filter-count'></span>selected out of <span class='total-count'></span> records.
