@@ -936,10 +936,10 @@ function parseMeta(d, i) {
     d.Selected = false;
     d.Edited = false;
     if (typeof(d.Temperature.replace) !== 'undefined') {
-        d.Temperature = $.map(d.Temperature.replace('[', '').replace(']', '').split(","), v => parseFloat(v) || NaN);
+        d.Temperature = $.map(d.Temperature.replace('[', '').replace(']', '').split(","), v => parseFloat(v));
     };
     if (typeof(d.Precipitation.replace) !== 'undefined') {
-        d.Precipitation = $.map(d.Precipitation.replace('[', '').replace(']', '').split(","), v => parseFloat(v) || NaN);
+        d.Precipitation = $.map(d.Precipitation.replace('[', '').replace(']', '').split(","), v => parseFloat(v));
     };
 
     if (typeof(d.ispercent) !== typeof(true)) {
