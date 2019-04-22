@@ -110,6 +110,14 @@ $(document).ready(function() {
       user_branch = 'master';
   }
 
+  if (repo_url == 'data/') {
+      document.getElementById("btn-stable").className += ' btn-primary';
+  } else if (data_repo == "EMPD2/EMPD-data" && user_branch == "master") {
+      document.getElementById("btn-latest").className += ' btn-primary';
+  } else {
+      document.getElementById("btn-custom").className += ' btn-primary';
+  }
+
   d3.tsv(repo_url + meta_file, parseMeta).then(function(data){
 
     d3.tsv(
