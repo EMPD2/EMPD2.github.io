@@ -453,28 +453,58 @@ $(document).ready(function() {
         formData["meta"] = meta_file;
         formData["metadata"] = data.filter(function(d){return d.Edited == true});
 
+        if (typeof(grecaptcha) === "undefined") {
+            $("#submit-failed").html(
+                "Please enable the javascript for Google Recaptcha to submit issues!");
+            $("#submit-failed").show();
+            $("#submit-successed").hide();
+            $("#submit-info").hide();
+            return false;
+        }
+
         grecaptcha.ready(function() {
             grecaptcha.execute('6LflGpsUAAAAAKhm3e-A5q30qh1099ZZeF884Vld',{action: 'submit_data'}).then(
                 function(token) {
-                    $("#submit-info").html("Please be patient, we are just dealing with your data. This may take one or two minutes and you should receive an email to " + formData.submitter_mail);
+                    formData["token"] = token;
+
+                    $("#submit-info").html(`Pinging to EMPD-admin at <a href='${form.attr('action')}'>${form.attr('action')}</a> to see if it is awake.`);
                     $("#submit-failed").hide();
                     $("#submit-successed").hide();
                     $("#submit-info").show();
-                    formData["token"] = token;
-                    $.post(form.attr('action'), JSON.stringify(formData)).then(
+
+                    // Ping the EMPD-admin to see if it is awake
+                    $.get(form.attr('action')).then(
+                        // Ping succeeded
                         function(result, status) {
-                            $("#submit-successed").html(status + ": " + result);
-                            data.forEach(function (d) {d.Edited = false;});
-                            $("#submit-info").hide();
-                            $("#submit-failed").hide();
-                            $("#submit-successed").show();
+
+                            $("#submit-info").html("Please be patient, we are just dealing with your data. This may take one or two minutes and you should receive an email to " + formData.submitter_mail);
+
+                            // Send the POST request
+                            $.post(form.attr('action') + "/empd-viewer/hook", JSON.stringify(formData)).then(
+                                // Post succeeded
+                                function(result, status) {
+                                    $("#submit-successed").html(status + ": " + result);
+                                    data.forEach(function (d) {d.Edited = false;});
+                                    $("#submit-info").hide();
+                                    $("#submit-failed").hide();
+                                    $("#submit-successed").show();
+                                },
+                                // Post failed
+                                function(jqxhr, status, errorThrown) {
+                                    $("#submit-failed").html(status + ": " + jqxhr.responseText);
+                                    $("#submit-info").hide();
+                                    $("#submit-successed").hide();
+                                    $("#submit-failed").show();
+                            });
                         },
+                        // Ping failed
                         function(jqxhr, status, errorThrown) {
-                            $("#submit-failed").html(status + ": " + jqxhr.responseText);
+                            $("#submit-failed").html("Could not reach the EMPD-admin<br>" + status + ": " + errorThrown);
                             $("#submit-info").hide();
                             $("#submit-successed").hide();
                             $("#submit-failed").show();
-                    });
+                        });
+
                 });
         });
         return false;
@@ -508,24 +538,42 @@ $(document).ready(function() {
             grecaptcha.execute('6LflGpsUAAAAAKhm3e-A5q30qh1099ZZeF884Vld',{action: 'report_issue'}).then(
                 function(token) {
                     formData["token"] = token;
-                    $("#report-info").html("Please be patient, we are just dealing with your report. This may take one or two minutes and you should receive an email to " + formData.submitter_mail);
+                    $("#report-info").html(`Pinging to EMPD-admin at <a href='${form.attr('action')}'>${form.attr('action')}</a> to see if it is awake.`);
                     $("#report-failed").hide();
                     $("#report-successed").hide();
                     $("#report-info").show();
-                    $.post(form.attr('action'), JSON.stringify(formData)).then(
+
+                    // Ping the EMPD-admin to see if it is awake
+                    $.get(form.attr('action')).then(
+                        // Ping succeeded
                         function(result, status) {
-                            $("#report-successed").html(status + ": " + result);
-                            data.forEach(function (d) {d.Edited = false;});
-                            $("#report-info").hide();
-                            $("#report-failed").hide();
-                            $("#report-successed").show();
+                            $("#report-info").html("Please be patient, we are just dealing with your report. This may take one or two minutes and you should receive an email to " + formData.submitter_mail);
+
+                            // Send the POST request
+                            $.post(form.attr('action') + "/empd-issues/hook", JSON.stringify(formData)).then(
+                                // Post succeeded
+                                function(result, status) {
+                                    $("#report-successed").html(status + ": " + result);
+                                    data.forEach(function (d) {d.Edited = false;});
+                                    $("#report-info").hide();
+                                    $("#report-failed").hide();
+                                    $("#report-successed").show();
+                                },
+                                // Post failed
+                                function(jqxhr, status, errorThrown) {
+                                    $("#report-failed").html("Could not deliver the report<br>" + status + ": " + jqxhr.responseText);
+                                    $("#report-info").hide();
+                                    $("#report-successed").hide();
+                                    $("#report-failed").show();
+                            });
                         },
+                        // Ping failed
                         function(jqxhr, status, errorThrown) {
-                            $("#report-failed").html(status + ": " + jqxhr.responseText);
+                            $("#report-failed").html("Could not reach the EMPD-admin<br>" + status + ": " + errorThrown);
                             $("#report-info").hide();
                             $("#report-successed").hide();
                             $("#report-failed").show();
-                    });
+                        });
                 });
         });
         return false;
