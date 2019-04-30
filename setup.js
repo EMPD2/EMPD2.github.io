@@ -118,6 +118,9 @@ $(document).ready(function() {
       document.getElementById("btn-custom").className += ' btn-primary';
   }
 
+  document.getElementById("btn-stable").href = location.protocol + "//" + location.host + location.pathname;
+  document.getElementById("btn-latest").href = location.protocol + "//" + location.host + location.pathname + "?branch=master";
+
   d3.tsv(repo_url + meta_file, parseMeta).then(function(data){
 
     d3.tsv(
@@ -206,6 +209,13 @@ $(document).ready(function() {
         document.getElementById("submit-instructions").innerHTML += (
             " You can download the metadata using the button below and send it via mail, or you submit it by filling out the form below. Note that the latter  is only possible if the pull request has the label <code>viewer-editable</code>. You can set this label if you write <code>@EMPD-admin allow-edits</code> in a comment in this PR."
         );
+    }
+
+    if (data_repo != 'EMPD2/EMPD-data' || user_branch != 'master') {
+        document.getElementById("report-instructions").innerHTML = (
+            "Issues can only be submit for the stable or latest version."
+        );
+        $("#report-form").hide();
     }
 
     // load diagram on popup
@@ -473,6 +483,48 @@ $(document).ready(function() {
     $("#submit-info").hide();
     $("#submit-failed").hide();
     $("#submit-successed").hide();
+
+    $("#report-form").submit(function(e){
+        var form = $(this);
+        var rawForm = form.serializeArray();
+        var formData = {};
+        for (var i = 0; i < rawForm.length; i++){
+            formData[rawForm[i]['name']] = rawForm[i]['value'];
+        }
+
+        formData["repo"] = data_repo;
+        formData["branch"] = user_branch;
+
+        grecaptcha.ready(function() {
+            grecaptcha.execute('6LflGpsUAAAAAKhm3e-A5q30qh1099ZZeF884Vld',{action: 'report_issue'}).then(
+                function(token) {
+                    formData["token"] = token;
+                    $("#report-info").html("Please be patient, we are just dealing with your report. This may take one or two minutes and you should receive an email to " + formData.submitter_mail);
+                    $("#report-failed").hide();
+                    $("#report-successed").hide();
+                    $("#report-info").show();
+                    $.post(form.attr('action'), JSON.stringify(formData)).then(
+                        function(result, status) {
+                            $("#report-successed").html(status + ": " + result);
+                            data.forEach(function (d) {d.Edited = false;});
+                            $("#report-info").hide();
+                            $("#report-failed").hide();
+                            $("#report-successed").show();
+                        },
+                        function(jqxhr, status, errorThrown) {
+                            $("#report-failed").html(status + ": " + jqxhr.responseText);
+                            $("#report-info").hide();
+                            $("#report-successed").hide();
+                            $("#report-failed").show();
+                    });
+                });
+        });
+        return false;
+    });
+
+    $("#report-info").hide();
+    $("#report-failed").hide();
+    $("#report-successed").hide();
 
   });
 

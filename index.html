@@ -170,6 +170,8 @@
                 <li role="presentation"><a href="#meta-editor" aria-controls="meta-editor" role="tab" data-toggle="tab">Edit Meta data</a></li>
 
                 <li role="presentation"><a href="#meta-submit" aria-controls="meta-submit" role="tab" data-toggle="tab">Submit changes to Github</a></li>
+
+                <li role="presentation"><a href="#report-issue" aria-controls="report-issue" role="tab" data-toggle="tab">Report issues</a></li>
             </ul>
             <div class="tab-content">
                 <div role="tabpanel" class="tab-pane active" id="meta-table">
@@ -297,7 +299,7 @@
                 <div role="tabpanel" class="tab-pane" id="meta-submit">
                     <p id="submit-instructions">Thank you for contributing your data!</p>
                     <p><button type="button" class="btn btn-link" id='download-edits'>Download edited data</button></p>
-                    <form id='submit-form' action="https://empd-admin.herokuapp.com/empd-viewer/hook", method="post" target='_blank'>
+                    <form id='submit-form' action="https://empd-admin.herokuapp.com/empd-viewer/hook" method="post" target='_blank'>
                         <div class="row form-group">
                             <div class="col-md-4 mb-3">
                                 <label for="submitter_firstname">First name*</label>
@@ -341,6 +343,61 @@
                     <div class="alert alert-info" role="alert" id="submit-info">Please be patient, we are just dealing with your data. This may take one or two minutes and you should receive an email.</div>
                     <div class="alert alert-danger" role="alert" id="submit-failed"></div>
                     <div class="alert alert-success" role="alert" id="submit-successed"></div>
+                    </div>
+
+                    <div role="tabpanel" class="tab-pane" id="report-issue">
+                        <p id="report-instructions">Thank you for reporting issues!</p>
+                        <form id='report-form' action="http://localhost:5000/empd-issues/hook" method="post" target='_blank'>
+                            <div class="row form-group">
+                                <div class="col-md-4 mb-3">
+                                    <label for="report_firstname">First name*</label>
+                                    <input type="text" class="form-control" id="report_firstname" name="submitter_firstname" placeholder="Jane" required>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="submitter_lastname">Last name*</label>
+                                    <input type="text" class="form-control" id="submitter_lastname" name="submitter_lastname" placeholder="Doe" required>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row form-group">
+                                <div class="col-md-4 mb-3">
+                                    <label for="report_mail">Email* (will not be made public)</label>
+                                    <input type="email" class="form-control" id="report_mail" name="submitter_mail" placeholder="janedoe@example.com" required>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="report_username">Github Username</label>
+                                    <div class="input-group">
+                                        <div class="input-group-addon">@</div>
+                                        <input type="text" class="form-control" id="report_username" name="submitter_username" placeholder="JaneDoe">
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row form-group">
+                                <div class="col-md-8 mb-3">
+                                    <label for="issue_title">Issue title*</label>
+                                    <input type="text" class="form-control" id="issue_title" name="issue_title" placeholder="Title of the ticket" required>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row form-group">
+                                <div class="col-md-8 mb-3">
+                                    <label for="issue_msg">Issue message*</label>
+                                    <textarea class="form-control" id="issue_msg" name="issue_msg" rows="3" placeholder="Provide a short description the issue you found..." required></textarea>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="checkbox">
+                                <label>
+                                  <input type="checkbox" required> By submitting this issue, you agree to make it publicly available under the Creative Commons Attribution 4.0 International license (CC-BY 4.0) in the <a href="https://github.com/EMPD2/EMPD-data" title="Github repository for the EMPD">EMPD-data repository on Github</a>. Please review the <a href="https://github.com/EMPD2/EMPD-data/blob/master/LICENSE" title="CC BY 4.0 LICENSE of the EMPD-data repository">license file</a> for further information. Furthermore you agree that your first and last name, as well as the Github username (if provided) are made public in the corresponding pull request.*
+                                </label>
+                            </div>
+                            </br>
+                             <button class="btn btn-primary" type="submit" id="btn-report">Report</button>
+                        </form>
+                        <div class="alert alert-info" role="alert" id="report-info">Please be patient, we are just dealing with your data. This may take one or two minutes and you should receive an email.</div>
+                        <div class="alert alert-danger" role="alert" id="report-failed"></div>
+                        <div class="alert alert-success" role="alert" id="report-successed"></div>
                     </div>
                 </div>
             </div>
