@@ -481,7 +481,7 @@ $(document).ready(function() {
                 function(token) {
                     formData["token"] = token;
 
-                    $("#submit-info").html(`Pinging to EMPD-admin at <a href='${form.attr('action')}'>${form.attr('action')}</a> to see if it is awake.`);
+                    $("#submit-info").html(`Please be patient, I am pinging to EMPD-admin at <a href='${form.attr('action')}'>${form.attr('action')}</a> to see if it is awake. This may take up to two minutes...`);
                     $("#submit-failed").hide();
                     $("#submit-successed").hide();
                     $("#submit-info").show();
@@ -552,7 +552,7 @@ $(document).ready(function() {
             grecaptcha.execute('6LflGpsUAAAAAKhm3e-A5q30qh1099ZZeF884Vld',{action: 'report_issue'}).then(
                 function(token) {
                     formData["token"] = token;
-                    $("#report-info").html(`Pinging to EMPD-admin at <a href='${form.attr('action')}'>${form.attr('action')}</a> to see if it is awake.`);
+                    $("#report-info").html(`Please be patient, I am pinging to EMPD-admin at <a href='${form.attr('action')}'>${form.attr('action')}</a> to see if it is awake. This may take up to two minutes...`);
                     $("#report-failed").hide();
                     $("#report-successed").hide();
                     $("#report-info").show();
@@ -1119,9 +1119,9 @@ function getPopupContent(data) {
             + (data.Publication4 != "" ? "<li>" + data.Publication4 + "</li>" : "")
             + (data.Publication5 != "" ? "<li>" + data.Publication5 + "</li>" : "")
             + (data.Publication1 != "" ? "</ul></details>": "")
-            + '<input class="btn pull-right" type="image" src="img/error.png" title="Report an issue for this sample" onclick="javascript:reportIssue(displayedData);" style="height:30px;">'
-            + '<input class="btn pull-right" type="image" src="img/cartadd.png" title="Add this sample to the download cart" onclick="javascript:displayedData.Selected=true;dataTable.redraw();" style="height:30px;">'
-            + '<input class="btn pull-right" type="image" src="img/pencil.png" title="Edit the meta information for this sample" onclick="javascript:editDisplayed();" style="height:30px;">'
+            + '<input class="btn pull-right" type="image" src="img/error.png" title="Report an issue for this sample" onclick="javascript:reportIssue(displayedData);" style="height:40px;">'
+            + '<input class="btn pull-right" type="image" src="img/cartadd.png" title="Add this sample to the download cart" onclick="javascript:displayedData.Selected=true;dataTable.redraw();" style="height:40px;">'
+            + '<input class="btn pull-right" type="image" src="img/pencil.png" title="Edit the meta information for this sample" onclick="javascript:editDisplayed();" style="height:40px;">'
             + '</div>');
 }
 
