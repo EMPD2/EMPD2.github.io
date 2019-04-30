@@ -128,7 +128,7 @@ $(document).ready(function() {
       document.getElementById("btn-latest").className += ' btn-primary';
       dataVersion = "latest";
       document.getElementById("version-info").innerHTML += (
-          `This is the latest version of the EMPD from Github. Please bear in mind that this data might be subject to change before the next release! To view the stable version, click <a href="${urlStable}" class="alert-link">here</a>.`)
+          `This is the latest version of the EMPD from <a href="https://github.com/EMPD2/EMPD-data" class="alert-link">Github</a>. Please bear in mind that this data might be subject to change before the next release! To view the last stable version, click <a href="${urlStable}" class="alert-link">here</a>.`)
   } else {
       document.getElementById("btn-custom").className += ' btn-primary';
       dataVersion = "custom";
