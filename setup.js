@@ -29,8 +29,8 @@ var dataTable,
     sampleMethodMenu,
     ageChart,
     locationChart,
-    select1,
-    select2,
+    contributorMenu,
+    workerMenu,
     temperatureChart,
     precipChart,
     okexceptMenu;
@@ -1306,7 +1306,9 @@ function initCrossfilter(data) {
   mapGroup = mapDim.group();
 
   //-----------------------------------
-  versionDim = xf.dimension( function(d) { return d.EMPD_version; });
+  versionDim = xf.dimension( function(d) {
+      return d.EMPD_version ? d.EMPD_version : "None";
+  });
   versionGroup = versionDim.group();
 
   //-----------------------------------
@@ -1440,8 +1442,8 @@ function initCrossfilter(data) {
 
     //-----------------------------------
     var versionColors = d3.scaleOrdinal()
-      .domain(["EMPD1", "EMPD2"])
-      .range(["#e34a33", Ocean_color]);   // http://colorbrewer2.org/
+      .domain(["EMPD1", "EMPD2", "None"])
+      .range(["#e34a33", Ocean_color, Unkown_color]);   // http://colorbrewer2.org/
 
     versionChart  = dc.rowChart("#version-chart");
 
@@ -1526,7 +1528,7 @@ function initCrossfilter(data) {
 
     //-----------------------------------
 
-    select1 = dc.selectMenu('#select1')
+    contributorMenu = dc.selectMenu('#contributor-filter')
         .dimension(sampleNameDim)
         .group(sampleNameDim.group())
         .multiple(true)
@@ -1534,7 +1536,7 @@ function initCrossfilter(data) {
         .controlsUseVisibility(true);
 
     //-----------------------------------
-    select2 = dc.selectMenu('#select2')
+    workerMenu = dc.selectMenu('#worker-filter')
         .dimension(workerDim)
         .group(workerDim.group())
         .multiple(true)
@@ -1590,8 +1592,9 @@ function initCrossfilter(data) {
 
     allCharts = [
         dataTable, versionChart, countryMenu, sampleContextMenu,
-        sampleTypeMenu, sampleMethodMenu, ageChart, locationChart, select1,
-        select2, temperatureChart, precipChart, okexceptMenu];
+        sampleTypeMenu, sampleMethodMenu, ageChart, locationChart,
+        contributorMenu, workerMenu, temperatureChart, precipChart,
+        okexceptMenu];
 
   //-----------------------------------
   dc.renderAll();
@@ -1644,17 +1647,7 @@ function resetTable() {
 
 // reset all except mapChart
 function resetAll_exceptMap() {
-  select1.filterAll();
-  select2.filterAll();
-  countryMenu.filterAll();
-  sampleContextMenu.filterAll();
-  sampleTypeMenu.filterAll();
-  sampleMethodMenu.filterAll();
-  ageChart.filterAll();
-  locationChart.filterAll();
-  temperatureChart.filterAll();
-  precipChart.filterAll();
-  versionChart.filterAll();
+  allCharts.slice(1).forEach(function(chart) {chart.filterAll();});
   resetTable();
   dc.redrawAll();
 }
