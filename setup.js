@@ -1048,6 +1048,7 @@ function getPopupContent(data) {
             + (data.Publication4 != "" ? "<li>" + data.Publication4 + "</li>" : "")
             + (data.Publication5 != "" ? "<li>" + data.Publication5 + "</li>" : "")
             + (data.Publication1 != "" ? "</ul></details>": "")
+            + '<input class="btn pull-right" type="image" src="img/error.png" title="Report an issue for this sample" onclick="javascript:reportIssue(displayedData);" style="height:30px;">'
             + '<input class="btn pull-right" type="image" src="img/cartadd.png" title="Add this sample to the download cart" onclick="javascript:displayedData.Selected=true;dataTable.redraw();" style="height:30px;">'
             + '<input class="btn pull-right" type="image" src="img/pencil.png" title="Edit the meta information for this sample" onclick="javascript:editDisplayed();" style="height:30px;">'
             + '</div>');
@@ -1068,6 +1069,14 @@ function workerTooltip(last, first, address1, address2, email1, email2) {
             ret = ret + "</span></div>";
         }
     return ret
+}
+
+//====================================================================
+
+function reportIssue(data) {
+    document.getElementById("issue_title").value = "Error with " + data.SampleName + ': ';
+    $('#meta-tabs a[href="#report-issue"]').tab('show');
+    document.getElementById('report-issue').scrollIntoView();
 }
 
 
