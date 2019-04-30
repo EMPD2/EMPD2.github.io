@@ -495,6 +495,15 @@ $(document).ready(function() {
         formData["repo"] = data_repo;
         formData["branch"] = user_branch;
 
+        if (typeof(grecaptcha) === "undefined") {
+            $("#report-failed").html(
+                "Please enable the javascript for Google Recaptcha to submit issues!");
+            $("#report-failed").show();
+            $("#report-successed").hide();
+            $("#report-info").hide();
+            return false;
+        }
+
         grecaptcha.ready(function() {
             grecaptcha.execute('6LflGpsUAAAAAKhm3e-A5q30qh1099ZZeF884Vld',{action: 'report_issue'}).then(
                 function(token) {
