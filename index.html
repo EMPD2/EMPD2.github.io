@@ -103,9 +103,10 @@
       </div>
       <div class="container" style="width: 1750px">
           <div class="row">
-      		<div class='dc-data-count' id='chart-count'>
-      			<span class='filter-count'></span>selected out of <span class='total-count'></span> records.
-      		</div>
+              <div class="alert alert-info alert-dismissible col-xs-12" role="alert" id="version-info">
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              </div>
+              <div class='dc-data-count col-xs-12' id='chart-count'></div>
           </div>
       	<div class="row" id="map-row">
             <div class="dc-chart col-xs-12">
@@ -138,7 +139,7 @@
 
                 <li role="presentation"><a href="#filters-tab" aria-controls="filters-tab" role="tab" data-toggle="tab">Filters</a></li>
 
-                <li role="presentation"><a href="#pollen-plot" aria-controls="pollen-plot" role="tab" data-toggle="tab">Pollen data</a></li>
+                <li role="presentation"><a href="#pollen-plot" aria-controls="pollen-plot" role="tab" data-toggle="tab">Pollen diagram</a></li>
 
                 <li role="presentation"><a href="#climate-plot" aria-controls="climate-plot" role="tab" data-toggle="tab">Climate diagram</a></li>
 
@@ -233,7 +234,7 @@
                         </div>
 
                         <div class="dc-chart col-xs-2" id="chart-temperature">
-                            <div class="dc-chart-title" id="temperature-title">DJF Temperature</div>
+                            <div class="dc-chart-title" id="temperature-title">Mean Annual Temperature</div>
                             <br>
                             <a class="reset" href="javascript:temperatureChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
                             <a class="preset" href="javascript:changeTemperatureChart(0);" title="Winter">DJF</a>
@@ -247,7 +248,7 @@
                         <br><br>
 
                         <div class="dc-chart col-xs-2" id="chart-precip">
-                            <div class="dc-chart-title" id="precip-title">DJF Precipitation</div>
+                            <div class="dc-chart-title" id="precip-title">Mean Annual Precipitation</div>
                             <br>
                             <a class="reset" href="javascript:precipChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
                             <a class="preset" href="javascript:changePrecipChart(0);" title="Winter">DJF</a>

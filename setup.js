@@ -69,6 +69,10 @@ var groupColors = {
     "Aquatics": Ocean_color
 }
 
+var dataVersion = "stable";  // stable, latest or custum
+
+var urlStable, urlLatest;
+
 var defaultEditorProperties = {"Id": {"type": "integer", "required": true}}
 
 var diagramJSON = {};
@@ -110,16 +114,26 @@ $(document).ready(function() {
       user_branch = 'master';
   }
 
+  urlStable = location.protocol + "//" + location.host + location.pathname;
+  urlLatest = urlStable + "?branch=master";
+  document.getElementById("btn-stable").href = urlStable;
+  document.getElementById("btn-latest").href = urlLatest;
+
   if (repo_url == 'data/') {
       document.getElementById("btn-stable").className += ' btn-primary';
+      dataVersion = "stable";
+      document.getElementById("version-info").innerHTML += (
+          `This is the last release of the EMPD, version 1, based on Davis, B.A.S. et al. Veget Hist Archaeobot (2013) 22: 521. <a href="https://doi.org/10.1007/s00334-012-0388-5" target="_blank" class="alert-link">10.1007/s00334-012-0388-5</a>. To view the latest version from Github, click <a href="${urlLatest}" class="alert-link">here</a>.`)
   } else if (data_repo == "EMPD2/EMPD-data" && user_branch == "master") {
       document.getElementById("btn-latest").className += ' btn-primary';
+      dataVersion = "latest";
+      document.getElementById("version-info").innerHTML += (
+          `This is the latest version of the EMPD from Github. Please bear in mind that this data might be subject to change before the next release! To view the stable version, click <a href="${urlStable}" class="alert-link">here</a>.`)
   } else {
       document.getElementById("btn-custom").className += ' btn-primary';
+      dataVersion = "custom";
+      $("#version-info").hide();
   }
-
-  document.getElementById("btn-stable").href = location.protocol + "//" + location.host + location.pathname;
-  document.getElementById("btn-latest").href = location.protocol + "//" + location.host + location.pathname + "?branch=master";
 
   d3.tsv(repo_url + meta_file, parseMeta).then(function(data){
 
@@ -200,7 +214,7 @@ $(document).ready(function() {
                      'metadata.tsv');
     });
 
-    if (data_repo == 'EMPD2/EMPD-data' && user_branch == 'master') {
+    if (dataVersion != "custom") {
         document.getElementById("submit-instructions").innerHTML += (
             " Please download the metadata using the button below and send it via mail."
         );
@@ -211,9 +225,9 @@ $(document).ready(function() {
         );
     }
 
-    if (data_repo != 'EMPD2/EMPD-data' || user_branch != 'master') {
+    if (dataVersion == "custom") {
         document.getElementById("report-instructions").innerHTML = (
-            "Issues can only be submit for the stable or latest version."
+            `Issues can only be submitted for the <a href="${urlStable}">stable</a> or <a href="${urlLatest}">latest</a> version.`
         );
         $("#report-form").hide();
     }
@@ -1395,7 +1409,7 @@ function initCrossfilter(data) {
         .html({
             some: '<strong>%filter-count</strong> selected out of <strong>%total-count</strong> records' +
                 ' | <a href=\'javascript: resetAll_exceptMap();\'>Reset All</a>',
-            all: 'All records selected. Please click on the graph to apply filters.'
+            all: `All <strong>%total-count</strong> records selected. Please click on the map or <a href="javascript:showFilters()">here</a> to apply filters.`
         });
 
   //-----------------------------------
@@ -1553,8 +1567,8 @@ function initCrossfilter(data) {
         .yAxisLabel("Entities")
         .centerBar(false)
         .elasticY(true)
-        .dimension(temperatureDims[0])
-        .group(temperatureGroups[0])
+        .dimension(temperatureDims[4])
+        .group(temperatureGroups[4])
         .x(d3.scaleLinear().domain(temperatureRange))
         .xUnits(dc.units.fp.precision(temperatureBinWidth))
         .round(function(d) {return temperatureBinWidth*Math.floor(d/temperatureBinWidth)})
@@ -1572,8 +1586,8 @@ function initCrossfilter(data) {
         .yAxisLabel("Entities")
         .centerBar(false)
         .elasticY(true)
-        .dimension(precipDims[0])
-        .group(precipGroups[0])
+        .dimension(precipDims[4])
+        .group(precipGroups[4])
         .x(d3.scaleLinear().domain(precipRange))
         .xUnits(dc.units.fp.precision(precipBinWidth))
         .round(function(d) {return precipBinWidth*Math.floor(d/precipBinWidth)})
@@ -1608,7 +1622,7 @@ function changeTemperatureChart(what) {
     temperatureChart.filter(null);
     temperatureChart.dimension(temperatureDims[what]);
     temperatureChart.group(temperatureGroups[what]);
-    document.getElementById("temperature-title").innerHTML = monthsSeasons[what + 12] + " Temperature";
+    document.getElementById("temperature-title").innerHTML = `Mean ${monthsSeasons[what + 12]} Temperature`;
     temperatureChart.filter([temperatureFilters]);
     dc.redrawAll();
 }
@@ -1618,7 +1632,7 @@ function changePrecipChart(what) {
     precipChart.filter(null);
     precipChart.dimension(precipDims[what]);
     precipChart.group(precipGroups[what]);
-    document.getElementById("temperature-title").innerHTML = monthsSeasons[what] + " Precipitation";
+    document.getElementById("precip-title").innerHTML = `Mean ${monthsSeasons[what + 12]} Precipitation`;
     precipChart.filter([precipFilters]);
     dc.redrawAll();
 }
@@ -1635,6 +1649,11 @@ function resetData(data) {
     dataTable.sortBy(d => +d.Id);
 
     dc.redrawAll();
+}
+
+function showFilters() {
+    $('#meta-tabs a[href="#filters-tab"]').tab('show');
+    document.getElementById('filters-tab').scrollIntoView();
 }
 
 // reset dataTable
