@@ -256,11 +256,12 @@ $(document).ready(function() {
                     document.getElementById("climate-diagram").innerHTML = "<svg/>";
                     document.getElementById("climate-diagram-legend").innerHTML = "<svg/>";
                     // document.getElementById("map-row").style.height = "800px";
+                    var diagramTitle = `${displayedData.SiteName} (${displayedData.SampleName})`;
                     $('#meta-tabs a[href="#pollen-plot"]').tab('show');
-                    plotPollen(taxa_data.filter(d => d.make_percent.toLowerCase() == "true"), "pollen-diagram");
+                    plotPollen(taxa_data.filter(d => d.make_percent.toLowerCase() == "true"), "pollen-diagram", diagramTitle);
                     plotPollenLegend('pollen-diagram-legend');
                     $('#meta-tabs a[href="#climate-plot"]').tab('show');
-                    plotClimate(data[Id], "climate-diagram");
+                    plotClimate(data[Id], "climate-diagram", diagramTitle);
                     plotClimateLegend("climate-diagram-legend");
                     $('#meta-tabs a[href="#' + activeTab + '"]').tab('show');
                 });
@@ -709,7 +710,7 @@ function highlightDisplayed() {
 
 //====================================================================
 
-function plotPollen(data, elemId) {
+function plotPollen(data, elemId, title) {
 
     var svg = d3.select("#" + elemId).select("svg"),
         margin = {top: 60, right: 80, bottom: 180, left: 40},
@@ -749,7 +750,7 @@ function plotPollen(data, elemId) {
         .attr("y", -margin.top+20)
         .attr("text-anchor", "middle")
         .attr("class", "title")
-        .text(data[0].samplename);
+        .text(title);
 
     var maxPollen = Math.max.apply(Math, data.map(d => +d.percentage));
 
@@ -879,12 +880,11 @@ function plotPollenLegend(elemId) {
 }
 
 // ==================================================================
-function plotClimate(data, elemId) {
+function plotClimate(data, elemId, title) {
     //graph code
 
     var precip = data.Precipitation.slice(),
-        temperature = data.Temperature,
-        sampleName = data.SampleName;
+        temperature = data.Temperature;
 
     for (i = 12; i < monthsSeasons.length; i++) {
         if (isNaN(precip[i])) {
@@ -898,7 +898,7 @@ function plotClimate(data, elemId) {
 
     var svg = d3.select("#" + elemId).select("svg"),
         margin = {top: 40, right: 80, bottom: 180, left: 40},
-        width = 1000 - margin.left - margin.right,
+        width = 1000 - margin.left - margin.right - 500,
         height = 300 - margin.top - margin.bottom;
 
     svg
@@ -932,7 +932,7 @@ function plotClimate(data, elemId) {
         .attr("y", -margin.top+20)
         .attr("text-anchor", "middle")
         .attr("class", "title")
-        .text(sampleName);
+        .text(title);
 
     var maxTemp = Math.max.apply(Math, temperature);
     var minTemp = Math.min.apply(Math, temperature);
