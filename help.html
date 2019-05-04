@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>EMPD Viewer / Help</title>
+    <title>EMPD / Help</title>
 
     <script src="https://unpkg.com/jquery@3.3.1/dist/jquery.min.js"></script>
     <script src="https://unpkg.com/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
@@ -44,61 +44,70 @@
       <div class="container">
 	</br>
 
-    <div class="alert alert-danger">This page is not yet adapted to the EMPD viewer!</div><br>
-
-
       	<div class="row">
-		<div class="col-xs-12"><b>Related articles:</b></br>
-		<ul>
-			<li>
-			An interactive tool for navigation within a database of water and carbon stable isotope records from natural archives
-			<a href="http://www.clim-past-discuss.net/cp-2015-165/" target="_blank">(http://www.clim-past-discuss.net/cp-2015-165/)</a>
-			<li>
-			<a href="http://nbviewer.jupyter.org/github/PBrockmann/Paleo_Data_Spreadsheet/blob/master/Paleo_Data_Spreadsheet.ipynb">
-			Proposal for a structured spreadsheet for Paleo Data to interface with the Linked Paleo Data container
-			</a>
-		<ul>
+	        <div class="col-xs-12"><h3>Citing the EMPD:</h3></br>
+                We are currently working on a new publication for the EMPD, version 2. However, if you use data in your publications, please cite the corresponding publication of version 1:
+        		<ul>
+        			<li>
+                        Davis, B.A.S., Zanon, M., Collins, P. et al., The European Modern Pollen Database (EMPD) project, <i>Veget Hist Archaeobot</i> (<b>2013</b>) 22: 521. <a href="https://doi.org/10.1007/s00334-012-0388-5">https://doi.org/10.1007/s00334-012-0388-5</a>
+                    </li>
+        		<ul>
 	        </div>
         </div>
 	</br>
 
       	<div class="row">
-		<div class="col-xs-12"><b>Description:</b></br>
-		This application allows you to select different paleo-oceanographic proxies collected at LSCE
-		according to various dimensions (spatial position, depth, age, archive, material type and chronological information).
+		<div class="col-xs-12"><h3>Description:</h3></br>
+		This viewer allows you to interactively explore and download samples from the Eurasian Modern Pollen Database (EMPD).
 		</div>
         </div>
 	</br>
 
-      	<div class="row">
-		<div class="col-xs-2">
-		<img class="imghelp img-responsive" src="img_help/filter_01.png"/>
-		<img class="imghelp img-responsive" src="img_help/filter_02.png"/>
-		You can apply filters on dimensions such as depth, age, archive, material type and chronological information by interacting with the charts. All charts are linked together so that filters applied in one chart will update the others, as well as the map.
+      	<div class="row jumbotron">
+		<div class="col-xs-4 jumbotro">
+            <h4>Filtering the data</h4>
+            <img class="imghelp img-responsive" src="img_help/filters_tab.png"/>
+            Click the <i>Filters</i> tab to apply filters to the database<br><br>
+    		<img class="imghelp img-responsive" src="img_help/filter_01.png"/>
+    		You can apply filters on meta informations such as precipitation, temperature, age uncertainty, etc. by interacting with the charts. All charts are linked together so that filters applied in one chart will update the others, as well as the map.
+            <br><br>
+    		<img class="imghelp img-responsive" src="img_help/filter_02.png"/>
+            Some meta data is filtered by menus. Simply select the entry in the menu to apply a filter.
+            <br><br>
+    		<img class="img-responsive" style="border:1px solid black" src="img_help/filter_03.png"/>
+    		To cancel a filter, click on "reset".
+        </div>
+		<div class="col-xs-3 col-xs-offset-1">
+            <h4>Navigating the map</h4>
+    		<img class="imghelp img-responsive" src="img_help/proxy_01.png"/>
+    		You can view information about a sample (name, site, position, etc.) when you click on one of the markers. If you hover over it with your mouse, the sample will also be highlighted in bold text in the <i>Meta data table</i> tab.
+            <br><br>
+    		<img class="imghelp img-responsive" src="img_help/cluster_02.png"/>
+    		When several proxies share the same location, they are grouped together in a cluster (colored circles).
+    		Click on a cluster to display all the proxies it contains.
+            <br><br>
+    		<img class="imghelp img-responsive" src="img_help/cluster_01.png"/>
+    		Red clusters represent more than 100 proxies, yellow clusters contain more than 10, and all others are green.
 		</div>
-		<div class="col-xs-2">
-		<img class="imghelp img-responsive" src="img_help/filter_03.png"/>
-		To cancel a filter, click on "reset".
-		</div>
-		<div class="col-xs-3">
-		<img class="imghelp img-responsive" src="img_help/proxy_01.png"/>
-		You can view information about a proxy (id, position, etc.) when you mouse over its position marker. This will also highlight in bold text the corresponding row in the data table showing the proxy information, along with the species and the reference of the paper. Click on the DOI to view the listing in google scholar, the web search engine for scientific papers.
-		</div>
-		<div class="col-xs-2">
-		<img class="imghelp img-responsive" src="img_help/cluster_02.png"/>
-		When several proxies share the same location, they are grouped together in a cluster (colored circles).
-		Click on a cluster to display all the proxies it contains.
-		</div>
-		<div class="col-xs-3">
-		<img class="imghelp img-responsive" src="img_help/cluster_01.png"/>
-		Red clusters represent more than 100 proxies, yellow clusters contain more than 10, and all others are green.
+		<div class="col-xs-3 col-xs-offset-1">
+            <h4>Accessing the sample Data</h4>
+            <img class="imghelp img-responsive" src="img_help/pollen_diagram.png"/>
+            When you click on a sample in the map, you can see the pollen percentages in the <i>Pollen diagram</i> tab below it.
+            <br><br>
+            <img class="imghelp img-responsive" src="img_help/climate_diagram.png"/>
+            Additionally, you can see a diagram of Precipitation and Temperature based on the data from <a href="http://worldclim.org/">WorldClim</a> in the <i>Climate diagram</i> tab.
+            <br><br>
+            <img class="imghelp img-responsive" src="img_help/data_download.png"/>
+            You can select samples through the <img class="inline-image" src="img/cartadd.png"/> button. Either use the popup or the checkbox in the <i>Meta data table</i> to select a single sample, or use the button below the map to select all currently selected samples.
+            <br>
+            To download the data, as a tab-separated file, use the <img class="inline-image" src="img/shipping.png"/> button.
 		</div>
         </div>
 
 	</br>
       	<div class="row">
               <div class="col-xs-4">
-		<p><b>Technical architecture:</b>
+		<p><h4>Technical architecture:</h4>
 		<p>This application uses following javascript libraries:
 			<ul>
 			<li><b>dc.js</b> Dimensional Charting Javascript Library<br>
@@ -106,35 +115,29 @@
 			<li><b>dc-addons</b> to dc.js<br>
 				<a target="_blank" href="https://github.com/Intellipharm/dc-addons">https://github.com/Intellipharm/dc-addons</a>
 			<li><b>Crossfilter</b> for Fast Multidimensional Filtering for Coordinated Views<br>
-				<a target="_blank" href="http://square.github.io/crossfilter">http://square.github.io/crossfilter</a>
+				<a target="_blank" href="https://github.com/crossfilter/crossfilter">https://github.com/crossfilter/crossfilter</a>
 			<li><b>D3.js</b> for Data-Driven Documents<br>
 				<a target="_blank" href="http://d3js.org">http://d3js.org</a>
 			<li><b>Leaflet</b> Open-Source JavaScript Library for Mobile-Friendly Interactive Maps<br>
 				<a target="_blank" href="http://leafletjs.com">http://leafletjs.com</a>
+            <li><b>json-editor</b> An HTML editor for JSON objects<br>
+                <a target="_blank" href="https://github.com/json-editor/json-editor/">https://github.com/json-editor/json-editor/</a>
 			</ul>
 		</p>
               </div>
               <div class="col-xs-4">
-		<p><b>Open source code:</b>
-		<p>This application was created and developed by Patrick Brockmann (CEA - LSCE), with coding contributions from Cathy Nangini (CNRS - LSCE). The source code is available at:
-			<a target="_blank" href="http://github.com/PBrockmann/ClimateProxiesFinder">http://github.com/PBrockmann/ClimateProxiesFinder</a>
+		<p><h4>Open source code:</h4>
+		<p>This application was created and developed by <a href="http://www.philipp-s-sommer.de">Philipp S. Sommer</a>. The source code is available at:
+            <a target="_blank" href="https://github.com/EMPD2/EMPD2.github.io">https://github.com/EMPD2/EMDP2.github.io</a>
 		</p>
 		<p><b>Credits:</b>
 			<ul>
-			<li><p>The baselayer tiles are provided by the ArcGis Online service<br>
-				<a target="_blank" href="http://services.arcgisonline.com/ArcGIS/rest/services/Ocean_Basemap/MapServer">http://services.arcgisonline.com/ArcGIS/rest/services/Ocean_Basemap/MapServer</a>
-				</p>
-			<li><p><a href="https://icons8.com/icon/12391/return-purchase">Shopping cart</a> and <a href="https://icons8.com/icon/49/edit">pencil</a> icons from <a href="https://icons8.com">Icons8</a>
+            <li><p>This application is inspired by the
+			<a target="_blank" href="http://github.com/PBrockmann/ClimateProxiesFinder">ClimateProxiesFinder</a>, developed by Patrick Brockmann (CEA - LSCE).
+            </p>
+			<li><p><a href="https://icons8.com/icon/12391/return-purchase">Shopping cart</a>, <a href="https://icons8.com/icon/49/edit">pencil</a> and <a href="https://icons8.com/icon/64903/error">alert</a> icons are downloaded from <a href="https://icons8.com">Icons8</a>
 				</p>
 			</ul>
-              </div>
-              <div class="col-xs-4">
-		<p><b>Known issues:</b>
-			<ul>
-			<li>The projection used is a "Spherical Mercator" with an extension to North and South limited to 85°.
-			    This is a problem for data collected at more northern or southern positions. In this case, proxy  positions are set to 85°.
-			</ul>
-		</p>
               </div>
 
         </div>

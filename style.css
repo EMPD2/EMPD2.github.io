@@ -241,3 +241,7 @@ div.scroll {
     padding-left: 10px;
     padding-right: 10px;
 }
+
+.inline-image {
+    height: 1.1em;
+}
