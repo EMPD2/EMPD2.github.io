@@ -600,6 +600,13 @@ $(document).ready(function() {
 
   });
 
+  // Switch to a tab if a specific one is mentiond
+  var activeTab = urlParams.get('tab');
+  if (activeTab) {
+      $(`#meta-tabs a[href="#${activeTab}"]`).tab('show');
+      document.getElementById(activeTab).scrollIntoView();
+  }
+
 });
 
 //====================================================================
