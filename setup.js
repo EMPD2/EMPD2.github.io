@@ -63,10 +63,21 @@ var Herbs_color = "#ff7f50";
 var Unkown_color = "#FF4400";
 
 var groupColors = {
-    "Trees and shrubs": Trees_color,
-    "Herbs": Herbs_color,
-    "Ferns": Ferns_color,
-    "Aquatics": Ocean_color
+    "TRSH": Trees_color,
+    "HERB": Herbs_color,
+    "VACR": Ferns_color,
+    "AQUA": Ocean_color
+}
+
+var groupNames = {
+    "TRSH": "Trees & Shrubs",
+    "PALM": "Palms",
+    "MANG": "Mangroves",
+    "LIAN": "Lianas",
+    "SUCC": "Succulents",
+    "HERB": "Herbs",
+    "VACR": "Ferns",
+    "AQUA": "Aquatics"
 }
 
 var dataVersion = "stable";  // stable, latest or custum
@@ -139,7 +150,12 @@ $(document).ready(function() {
 
     d3.tsv(
         repo_url + 'postgres/scripts/tables/GroupID.tsv', function (d) {
+            if ("make_percent" in d) d.percent_values = d.make_percent;
             groupInfo[d.groupid] = d
+
+            if (typeof(groupNames[d.groupid]) == "undefined") {
+                groupNames[d.groupid] = d.groupname;
+            }
             return d;
         });
 
@@ -243,8 +259,7 @@ $(document).ready(function() {
             d3.tsv(
                 repo_url + 'samples/' + data[Id].SampleName + '.tsv',
                 function(d) {
-                    d.make_percent = groupInfo[d.groupid].make_percent;
-                    d.higher_groupname = groupInfo[groupInfo[d.groupid].higher_groupid].groupname;
+                    d.higher_groupid = groupInfo[d.groupid].higher_groupid;
                     d.samplename = data[Id].SampleName;
                     return d
                 }).then(function(taxa_data) {
@@ -258,7 +273,7 @@ $(document).ready(function() {
                     // document.getElementById("map-row").style.height = "800px";
                     var diagramTitle = `${displayedData.SiteName} (${displayedData.SampleName})`;
                     $('#meta-tabs a[href="#pollen-plot"]').tab('show');
-                    plotPollen(taxa_data.filter(d => d.make_percent.toLowerCase() == "true"), "pollen-diagram", diagramTitle);
+                    plotPollen(taxa_data.filter(d => groupInfo[d.groupid].percent_values.toLowerCase().startsWith('t')), "pollen-diagram", diagramTitle);
                     plotPollenLegend('pollen-diagram-legend');
                     $('#meta-tabs a[href="#climate-plot"]').tab('show');
                     plotClimate(data[Id], "climate-diagram", diagramTitle);
@@ -735,7 +750,7 @@ function plotPollen(data, elemId, title) {
         return `<strong>${d.acc_varname}</strong><br><br>` +
                "<table class='tooltip-table'>" +
                `<tr><td>Original name:</td><td>${d.original_varname}</td></tr>` +
-               `<tr><td>Group: </td><td>${d.higher_groupname}</td></tr>` +
+               `<tr><td>Group: </td><td>${groupNames[d.higher_groupid]}</td></tr>` +
                `<tr><td>Percentage: </td><td>${(+d.percentage).toFixed(2)}%</td></tr>` +
                `<tr><td>Counts: </td><td>${d.count}</td></tr></table>`;
     });
@@ -800,7 +815,7 @@ function plotPollen(data, elemId, title) {
         .attr("y", d => y(+d.percentage))
         .attr("width", barWidth - barPadding)
         .attr("height", d => height - y(+d.percentage))
-        .style("fill", d => groupColors[d.higher_groupname] || Unkown_color)
+        .style("fill", d => groupColors[d.higher_groupid] || Unkown_color)
         .attr("transform", (d, i) => `translate(${barWidth * (i + 0.5) + barPadding / 2} , 0)`)
         .on('mouseover', tip.show)
         .on('mouseout', tip.hide);
@@ -814,15 +829,15 @@ function plotPollen(data, elemId, title) {
         .attr("y", d => y(+d.percentage * 5 < maxPollen ? +d.percentage*5 : 0))
         .attr("width", barWidth - barPadding)
         .attr("height", d => height - y(+d.percentage * 5 < maxPollen ? +d.percentage*5 : 0))
-        .style("stroke", d => groupColors[d.higher_groupname] || Unkown_color)
+        .style("stroke", d => groupColors[d.higher_groupid] || Unkown_color)
         .style("stroke-dasharray", ("10,3")) // make the stroke dashed
         .style("fill", "none")
         .attr("transform", (d, i) => `translate(${barWidth * (i + 0.5) + barPadding / 2} , 0)`);
 
     var groups = [], prev;
     data.forEach(function(d) {
-        if (d.higher_groupname !== prev) {
-            prev = d.higher_groupname;
+        if (d.higher_groupid !== prev) {
+            prev = d.higher_groupid;
             groups.push({'key': prev, 'count': 1})
         } else {
             groups[groups.length-1]['count']++;
@@ -860,13 +875,13 @@ function plotPollenLegend(elemId) {
             .style("font-size", "18px")
             .attr("transform", "translate(25, 40)");
 
-    var groups = ["Trees and shrubs", "Herbs", "Ferns", "Aquatics",
+    var groups = ["TRSH", "HERB", "VACR", "AQUA",
                   "5-times exaggerated"];
     groups.forEach(function(text, i) {
         g.append("text")
             .attr("y", i+"em")
             .attr("x", "1em")
-    	    .text(text);
+    	    .text(groupNames[text] || text);
         g.append("circle")
             .attr("cy", i-0.25+"em")
             .attr("cx", 0)
