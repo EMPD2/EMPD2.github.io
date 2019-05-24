@@ -1,5 +1,0 @@
-{
-    "scripts": {
-        "test":  "testcafe chrome,firefox tests"
-    }
-}
