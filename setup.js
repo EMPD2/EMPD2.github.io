@@ -36,7 +36,7 @@ var dataTable,
     okexceptMenu;
 
 // all charts except the map
-var allCharts = []
+var allCharts;
 
 var groupInfo = {};
 
