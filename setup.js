@@ -858,8 +858,6 @@ function plotPollen(data, elemId, groupByName="acc_varname") {
         width = $("#" + elemId).width() - margin.left - margin.right,
         height = 300 - margin.top - margin.bottom;
 
-    console.log(plotData);
-
     svg
         .attr("preserveAspectRatio", "xMinYMin meet")
         .attr("viewBox", "0 0 960 240")
@@ -885,10 +883,6 @@ function plotPollen(data, elemId, groupByName="acc_varname") {
     var nbars = plotData.length;
     var barWidth = width / nbars;
     var barPadding = 4;
-
-    console.log(width);
-    console.log(barWidth);
-    console.log(nbars);
 
     var x = d3.scaleOrdinal().range(Array.from(Array(nbars).keys()).map(function(d) {return (d+1) * barWidth;}));
     var y = d3.scaleLinear().rangeRound([height, 0]);
