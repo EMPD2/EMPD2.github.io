@@ -6,7 +6,7 @@
 
 /* Reset the container */
 .container {
-  width: 1200px;
+  /* width: 1200px; */
   max-width: none !important;
 }
 
@@ -161,4 +161,3 @@
 .navbar-form .has-feedback .form-control-feedback {
   top: 0;
 }
-

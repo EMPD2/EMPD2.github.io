@@ -98,6 +98,14 @@ var repo_url = 'data/',
     meta_file = 'meta.tsv',
     data_repo = 'EMPD2/EMPD-data';
 
+// Locked diagrams
+var lockedElements = [];
+
+// plotted diagrams
+var lockableElements = [];
+
+var plottedPollenData = {};  // The pollen data plotted
+
 dc.config.defaultColors(d3.schemeRdBu[11])
 
 //====================================================================
@@ -255,30 +263,38 @@ $(document).ready(function() {
         displayedData = data[Id];
         highlightDisplayed();
 
+        var activeTab = $('#climate-plot').hasClass("active") ? "climate-plot" : "pollen-plot";
+        removeUnlocked();
+
         var pollenData = [];
             d3.tsv(
                 repo_url + 'samples/' + data[Id].SampleName + '.tsv',
                 function(d) {
                     d.higher_groupid = groupInfo[d.groupid].higher_groupid;
                     d.samplename = data[Id].SampleName;
+                    d.percentage = d.percentage == '' ? NaN : +d.percentage;
+                    d.count = d.count == '' ? NaN : +d.count;
                     return d
                 }).then(function(taxa_data) {
 
-                    activeTab = $('#climate-plot').hasClass("active") ? "climate-plot" : "pollen-plot";
+                    taxa_data = taxa_data.filter(d => !isNaN(d.percentage))
 
-                    document.getElementById("pollen-diagram").innerHTML = "<svg/>";
                     document.getElementById("pollen-diagram-legend").innerHTML = "<svg/>";
-                    document.getElementById("climate-diagram").innerHTML = "<svg/>";
                     document.getElementById("climate-diagram-legend").innerHTML = "<svg/>";
-                    // document.getElementById("map-row").style.height = "800px";
-                    var diagramTitle = `${displayedData.SiteName} (${displayedData.SampleName})`;
+
+                    var elemId = lockableElement("pollen-diagram", data[Id].SampleName, data[Id].SiteName);
                     $('#meta-tabs a[href="#pollen-plot"]').tab('show');
-                    plotPollen(taxa_data.filter(d => groupInfo[d.groupid].percent_values.toLowerCase().startsWith('t')), "pollen-diagram", diagramTitle);
+                    plotPollen(taxa_data, elemId);
                     plotPollenLegend('pollen-diagram-legend');
+
+                    var elemId = lockableElement("climate-diagram", data[Id].SampleName, data[Id].SiteName);
                     $('#meta-tabs a[href="#climate-plot"]').tab('show');
-                    plotClimate(data[Id], "climate-diagram", diagramTitle);
+                    plotClimate(data[Id], elemId);
                     plotClimateLegend("climate-diagram-legend");
+
                     $('#meta-tabs a[href="#' + activeTab + '"]').tab('show');
+
+                    plottedPollenData[data[Id].SampleName] = taxa_data;
                 });
 
     });
@@ -730,14 +746,119 @@ function highlightDisplayed() {
     }
 }
 
+function lockableElement(parent, entity, siteName) {
+    var parentElem = document.getElementById(parent);
+    var elemId = `${parent}-${entity}`
+    if (lockableElements.includes(elemId)) {
+        document.getElementById(elemId).scrollIntoView();
+        return "";
+    }
+    parentElem.insertAdjacentHTML("afterbegin", `
+        <ul class="list-inline list-group" id=${elemId}-title>
+            <li>
+                <button onclick='lockElement("${elemId}")' role="button" class="list-group-item" id="${elemId}-btn" title="Pin this Element"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span></button>
+            </li>
+            <li>
+                <h4 style="text-align:center;">${siteName} (${entity})</h4>
+            </li>
+        </ul>
+        <br>
+        <div id=${elemId}>
+        </div>`);
+    lockableElements.push(elemId)
+    return elemId;
+}
+
+function lockElement(elemId) {
+    if (!lockedElements.includes(elemId)) {
+        lockedElements.push(elemId);
+    } else {
+        lockedElements = lockedElements.filter(s => s != elemId);
+    }
+    $('#' + elemId + '-btn').button('toggle');
+}
+
+function removeUnlocked() {
+    lockableElements.filter(
+        elemId => !lockedElements.includes(elemId)).forEach(
+            function(elemId) {
+                document.getElementById(elemId).remove();
+                document.getElementById(`${elemId}-title`).remove();
+            });
+    lockableElements = lockableElements.filter(elemId => lockedElements.includes(elemId));
+}
+
 //====================================================================
 
-function plotPollen(data, elemId, title) {
+function plotPollen(data, elemId, groupByName="acc_varname") {
 
-    var svg = d3.select("#" + elemId).select("svg"),
+    // make the plots
+    var plotGroups = ["TRSH", "PALM", "MANG", "LIAN", "SUCC", "HERB", "VACR", "AQUA"];
+
+    data.filter(d => !plotGroups.includes(d.higher_groupid)).forEach(
+        function(d) {
+            plotGroups.push(d.higher_groupid);
+        }
+    );
+
+    var groupMap = {};
+    plotGroups.forEach(function(key) {
+        groupMap[key] = [];
+    });
+
+    var counts = {};
+
+    data.forEach(function(d) {
+        var name = d[groupByName] ? d[groupByName] : (
+            d.consol_name ? d.consol_name : (
+                d.acc_varname ? d.acc_varname : d.original_varname));
+        d.name = name;
+        if (!(name in counts)) {
+            counts[name] = {
+                percentage: 0,
+                name: name, count: 0,
+                orig: [], recon: [], acc: [], consol: [], group: []};
+            groupMap[d.higher_groupid].push(name);
+        }
+        counts[name].percentage += d.percentage;
+        counts[name].count += d.count;
+        if (!(counts[name].orig.includes(d.original_varname))) {
+            counts[name].orig.push(d.original_varname);
+        }
+        if (!(counts[name].recon.includes(d.reconname))) {
+            counts[name].recon.push(d.reconname);
+        }
+        if (!(counts[name].consol.includes(d.consol_name))) {
+            counts[name].consol.push(d.consol_name);
+        }
+        if (!(counts[name].acc.includes(d.acc_varname))) {
+            counts[name].acc.push(d.acc_varname);
+        }
+        if (!(counts[name].group.includes(d.higher_groupid))) {
+            counts[name].group.push(d.higher_groupid);
+        }
+
+    })
+
+    Object.values(groupMap).forEach(function(a) {
+        a.sort((a, b) => counts[a].name < counts[b].name ? -1 : 1);
+    });
+
+    var plotData = [];
+    plotGroups.forEach(function(g) {
+        groupMap[g].forEach(function(name) {
+            var d = jsonCopy(counts[name]);
+            d.group = g;
+            plotData.push(d);
+        });
+    });
+
+    var svg = d3.select("#" + elemId).append("svg"),
         margin = {top: 60, right: 80, bottom: 180, left: 40},
-        width = 1000 - margin.left - margin.right,
+        width = $("#" + elemId).width() - margin.left - margin.right,
         height = 300 - margin.top - margin.bottom;
+
+    console.log(plotData);
 
     svg
         .attr("preserveAspectRatio", "xMinYMin meet")
@@ -747,19 +868,27 @@ function plotPollen(data, elemId, title) {
       .attr('class', 'd3-tip')
       .offset([-10, 0])
       .html(function(d) {
-        return `<strong>${d.acc_varname}</strong><br><br>` +
+        meta = counts[d.name];
+        return `<strong>${d.name}</strong><br><br>` +
                "<table class='tooltip-table'>" +
-               `<tr><td>Original name:</td><td>${d.original_varname}</td></tr>` +
-               `<tr><td>Group: </td><td>${groupNames[d.higher_groupid]}</td></tr>` +
+               `<tr><td>Original name(s):</td><td>${d.orig.join(', ')}</td></tr>` +
+               `<tr><td>Accepted name(s):</td><td>${d.acc.join(', ')}</td></tr>` +
+               `<tr><td>Consolidated name(s):</td><td>${d.consol.join(', ')}</td></tr>` +
+               `<tr><td>Group: </td><td>${meta.group.join(', ')}</td></tr>` +
                `<tr><td>Percentage: </td><td>${(+d.percentage).toFixed(2)}%</td></tr>` +
-               `<tr><td>Counts: </td><td>${d.count}</td></tr></table>`;
+               `<tr><td>Counts: </td><td>${d.count}</td></tr>` +
+               `</table>`;
     });
 
     svg.call(tip);
 
-    var nbars = data.length;
+    var nbars = plotData.length;
     var barWidth = width / nbars;
     var barPadding = 4;
+
+    console.log(width);
+    console.log(barWidth);
+    console.log(nbars);
 
     var x = d3.scaleOrdinal().range(Array.from(Array(nbars).keys()).map(function(d) {return (d+1) * barWidth;}));
     var y = d3.scaleLinear().rangeRound([height, 0]);
@@ -767,18 +896,11 @@ function plotPollen(data, elemId, title) {
     var g = svg.append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    var title = g.append("text")
-        .attr("dx", (width / 2))
-        .attr("y", -margin.top+20)
-        .attr("text-anchor", "middle")
-        .attr("class", "title")
-        .text(title);
-
-    var maxPollen = Math.max.apply(Math, data.map(d => +d.percentage));
+    var maxPollen = Math.max.apply(Math, plotData.map(d => +d.percentage));
 
     // to handle duplicated taxa names, we add the `index` to the name. This
     // will be removed later
-    x.domain(data.map((d, i) => formatNumberLength(i, 2) + d.acc_varname));
+    x.domain(plotData.map((d, i) => formatNumberLength(i, 2) + d.name));
     y.domain([0, maxPollen]);
 
     var xAxis = g => g
@@ -809,13 +931,13 @@ function plotPollen(data, elemId, title) {
     g.append("g").call(yAxis);
 
     g.selectAll(".bar")
-      .data(data)
+      .data(plotData)
       .enter().append("rect")
         .attr("class", "bar")
         .attr("y", d => y(+d.percentage))
         .attr("width", barWidth - barPadding)
         .attr("height", d => height - y(+d.percentage))
-        .style("fill", d => groupColors[d.higher_groupid] || Unkown_color)
+        .style("fill", d => groupColors[d.group] || Unkown_color)
         .attr("transform", (d, i) => `translate(${barWidth * (i + 0.5) + barPadding / 2} , 0)`)
         .on('mouseover', tip.show)
         .on('mouseout', tip.hide);
@@ -823,26 +945,20 @@ function plotPollen(data, elemId, title) {
     // Exaggerations
     g.append("g")
       .selectAll(".bar")
-      .data(data)
+      .data(plotData)
       .enter().append("rect")
         .attr("class", "bar")
         .attr("y", d => y(+d.percentage * 5 < maxPollen ? +d.percentage*5 : 0))
         .attr("width", barWidth - barPadding)
         .attr("height", d => height - y(+d.percentage * 5 < maxPollen ? +d.percentage*5 : 0))
-        .style("stroke", d => groupColors[d.higher_groupid] || Unkown_color)
+        .style("stroke", d => groupColors[d.group] || Unkown_color)
         .style("stroke-dasharray", ("10,3")) // make the stroke dashed
         .style("fill", "none")
         .attr("transform", (d, i) => `translate(${barWidth * (i + 0.5) + barPadding / 2} , 0)`);
 
-    var groups = [], prev;
-    data.forEach(function(d) {
-        if (d.higher_groupid !== prev) {
-            prev = d.higher_groupid;
-            groups.push({'key': prev, 'count': 1})
-        } else {
-            groups[groups.length-1]['count']++;
-        }
-    });
+    var groups = plotGroups
+        .map(g => ( {"key": g, "count": groupMap[g].length} ))
+        .filter(d => d.count);
 
     // groupname bars
     g.append("g")
@@ -902,7 +1018,7 @@ function plotPollenLegend(elemId) {
 }
 
 // ==================================================================
-function plotClimate(data, elemId, title) {
+function plotClimate(data, elemId) {
     //graph code
 
     var precip = data.Precipitation.slice(),
@@ -920,7 +1036,7 @@ function plotClimate(data, elemId, title) {
 
     var svg = d3.select("#" + elemId).select("svg"),
         margin = {top: 40, right: 80, bottom: 180, left: 40},
-        width = 1000 - margin.left - margin.right - 500,
+        width = $("#" + elemId).width() - margin.left - margin.right - 500,
         height = 300 - margin.top - margin.bottom;
 
     svg
@@ -1110,8 +1226,11 @@ function parseMeta(d, i) {
 
 // ==================================================================
 
-function getPopupContent(data) {
+function jsonCopy(src) {
+  return JSON.parse(JSON.stringify(src));
+}
 
+function getPopupContent(data) {
     return ('<div class="container" style="width:300px">'
             + `Sample name: <b>${data.SampleName}</b></br>`
             + `<b>${data.Country}</b></br></br>`
@@ -1366,8 +1485,8 @@ function initCrossfilter(data) {
   mapChart = dc.leafletMarkerChart("#chart-map");
 
   mapChart
-      .width(2000)
-      .height(600)
+      .width($("#chart-map").width())
+      .height(400)
       .dimension(mapDim)
       .group(mapGroup)
       .center([60, 69])    // slightly different than zoomHome to have a info updated when triggered
