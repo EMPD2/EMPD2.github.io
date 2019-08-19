@@ -140,7 +140,9 @@
     <br>
         <div class='row' id='editor-row'>
             <ul class="nav nav-tabs" role="tablist" id="meta-tabs">
-                <li role="presentation" aria-controls="meta-table" class="active"><a href="#meta-table" role="tab" data-toggle="tab">Meta data table</a></li>
+                <li role="presentation" aria-controls="formatted-meta-table" class="active"><a href="#formatted-meta-table" role="tab" data-toggle="tab">Metadata</a></li>
+
+                <li role="presentation" aria-controls="meta-table"><a href="#meta-table" role="tab" data-toggle="tab">Full metadata</a></li>
 
                 <li role="presentation"><a href="#filters-tab" aria-controls="filters-tab" role="tab" data-toggle="tab">Filters</a></li>
 
@@ -155,11 +157,36 @@
                 <li role="presentation"><a href="#report-issue" aria-controls="report-issue" role="tab" data-toggle="tab">Report issues</a></li>
             </ul>
             <div class="tab-content">
-                <div role="tabpanel" class="tab-pane active" id="meta-table">
+                <div role="tabpanel" class="tab-pane active" id="formatted-meta-table">
+                    <a id="resetFormattedTableLink" class="reset" href="javascript:resetTable();" style="visibility: hidden;">reset</a>
+         	    <br>
+                     <div class='scroll'>
+                         <table class='span12 table table-hover meta-table' id='formatted-chart-table'>
+                             <thead><tr class='header' id='formatted-meta-table-head'>
+                                 <th class="th_Sel">Download</th>
+                                 <th class="th_Id">Id</th>
+                                 <th class="th_SampleName">Sample name</th>
+                                 <th class="th_SiteName">Site name</th>
+                                 <th class="th_Country">Country</th>
+                                 <th class="th_Elevation">Elevation</th>
+                                 <th class="th_Worker">Analysts</th>
+                                 <th class="th_Publication">Reference</th>
+                                 <th class="th_DOI">DOI</th>
+                             </tr></thead>
+                         </table>
+                     </div>
+                     <div id="formatted-paging" style='text-align: center; padding-bottom: 3em;'>
+                        Showing <span id="begin-formatted"></span>-<span id="end-formatted"></span> of <span id="size-formatted"></span> <span id="totalsize-formatted"></span>
+                        <input id="prev-formatted-table-page" class="btn" type="Button" value="Previous" onclick="javascript:prev_table_page()" />
+                        <input id="next-formatted-table-page" class="btn" type="button" value="Next" onclick="javascript:next_table_page()"/>
+                     </div>
+                </div>
+
+                <div role="tabpanel" class="tab-pane" id="meta-table">
                     <a id="resetTableLink" class="reset" href="javascript:resetTable();" style="visibility: hidden;">reset</a>
          	    <br>
                      <div class='scroll'>
-                         <table class='span12 table table-hover' id='chart-table'>
+                         <table class='span12 table table-hover meta-table' id='chart-table'>
                              <thead><tr class='header' id='meta-table-head'>
                                  <th class="th_Sel">Download</th>
                                  <th class="th_Id">Id</th>

@@ -126,7 +126,7 @@ div.scroll {
       overflow-x:scroll;
 }
 
-#chart-table table {
+.meta-table table {
  table-layout: fixed;
 }
 
@@ -141,14 +141,25 @@ div.scroll {
   width:12000px;
 }
 
-#chart-table>thead>tr>th, #chart-table>tbody>tr>td {
+#formatted-chart-table, #formatted-chart-table thead, #formatted-chart-table tbody {
+  width:1200px;
+  max-width: none !important;
+}
+
+#formatted-chart-table tbody {
+  display: block;
+  height: 400px;
+  overflow-y: auto;
+}
+
+.meta-table>thead>tr>th, .meta-table>tbody>tr>td {
   float: left;
   line-height: 1em;
   border: 0px;
   padding: 5px;
 }
 
-#chart-table>thead>tr>th {
+.meta-table>thead>tr>th {
   font-weight: normal;
 }
 
@@ -157,18 +168,40 @@ div.scroll {
 }
 
 
-#chart-table .th_MetaColumn , #chart-table .dc-table-column { width: 140px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Sel , #chart-table .dc-table-column._0 { width: 50px;  text-align: right; padding-right: 5px; }
-#chart-table .th_Id , #chart-table .dc-table-column._1 { width: 50px;  text-align: right; padding-right: 5px; }
+.meta-table .th_MetaColumn , .meta-table .dc-table-column { width: 140px;  text-align: right; padding-right: 5px; }
+.meta-table .th_Sel , .meta-table .dc-table-column._0 { width: 50px;  text-align: right; padding-right: 5px; }
+.meta-table .th_Id , .meta-table .dc-table-column._1 { width: 50px;  text-align: right; padding-right: 5px; }
 
-#chart-table .dc-table-column  {
+#formatted-chart-table .th_SampleName, #formatted-chart-table .dc-table-column._2 {
+    width: 120px;  text-align: left; padding-right: 5px;
+}
+#formatted-chart-table .th_SiteName, #formatted-chart-table .dc-table-column._3 {
+    width: 120px;  text-align: right; padding-right: 5px;
+}
+#formatted-chart-table .th_Country, #formatted-chart-table .dc-table-column._4 {
+    width: 120px;  text-align: right; padding-right: 5px;
+}
+#formatted-chart-table .th_Elevation, #formatted-chart-table .dc-table-column._5 {
+    width: 120px;  text-align: center; padding-right: 5px;
+}
+#formatted-chart-table .th_Worker, #formatted-chart-table .dc-table-column._6 {
+    width: 200px;  text-align: center; padding-right: 5px;
+}
+#formatted-chart-table .th_Publication, #formatted-chart-table .dc-table-column._7 {
+    width: 210px;  text-align: left; padding-right: 5px;
+}
+#formatted-chart-table .th_DOI, #formatted-chart-table .dc-table-column._8 {
+    width: 210px;  text-align: left; padding-right: 5px;
+}
+
+.meta-table .dc-table-column  {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 
-#chart-table input[type="checkbox"] {
+.meta-table input[type="checkbox"] {
     padding: 0;
     margin-left: 15px;
     margin-right: 10px;
@@ -176,14 +209,14 @@ div.scroll {
     margin-bottom: 0px;
 }
 
-#chart-table td {
+.meta-table td {
   cursor: pointer;
   color: #333;
   font-size: 13px;
   border: 0px;
 }
 
-#chart-table thead tr {
+.meta-table thead tr {
   background: #333;
   background-color: #ddd;
   color: #333;
@@ -192,18 +225,18 @@ div.scroll {
   padding: 0px;
 }
 
-#chart-table tbody tr {
+.meta-table tbody tr {
   background: #333;
   background-color: #eee;
   border-top: 1px solid #ddd;
   font-weight: normal;
 }
 
-#chart-table tr:hover {
+.meta-table tr:hover {
   background: #ccc;
 }
 
-#chart-table tr:hover td {
+.meta-table tr:hover td {
   font-weight: bold;
 }
 

@@ -21,6 +21,7 @@ var temperatureGroups,
     precipGroups;
 
 var dataTable,
+    formattedDataTable,
     mapChart,
     versionChart,
     countryMenu,
@@ -196,11 +197,13 @@ $(document).ready(function() {
             selection.forEach(function(d) {
     		data[d.Id -1].Selected = true;
     	});
+            formattedDataTable.redraw();
             dataTable.redraw();
         });
 
     $('#button_cartdelete').click(function() {
         data.forEach(function(d,i) { d.Selected = false; });
+        formattedDataTable.redraw();
         dataTable.redraw();
     });
 
@@ -317,27 +320,30 @@ $(document).ready(function() {
         highlightDisplayed();
     });
 
-    // Add ellipses for long entries and make DOI a hyperlink to google scholar
-    $('#chart-table').on('mouseover', '.dc-table-column', function() {
-      // displays popup only if text does not fit in col width
-      if (this.offsetWidth < this.scrollWidth) {
-        d3.select(this).attr('title', d3.select(this).text());
-      }
-    });
+    ['chart-table', 'formatted-chart-table'].forEach(function(tableId) {
+        // Add ellipses for long entries and make DOI a hyperlink to google scholar
+        $('#' + tableId).on('mouseover', '.dc-table-column', function() {
+          // displays popup only if text does not fit in col width
+          if (this.offsetWidth < this.scrollWidth) {
+            d3.select(this).attr('title', d3.select(this).text());
+          }
+        });
 
-    // Make DOI a hyperlink to google scholar and handle selection
-    $('#chart-table').on('click', '.dc-table-column', function() {
-      column = d3.select(this).attr("class");
-      if (column == "dc-table-column _0") {
-          Id = d3.select(this.parentNode).select(".dc-table-column._1").text();
-         	data[Id-1].Selected = d3.select(this).select('input').property('checked');
-      } else {
-          Id = d3.select(this.parentNode).select(".dc-table-column._1").text();
-      	  dataTable.filter(Id);
-      	  dc.redrawAll();
-      	  // make reset link visible
-          d3.select("#resetTableLink").style("display", "inline");
-      }
+        // Make DOI a hyperlink to google scholar and handle selection
+        $('#' + tableId).on('click', '.dc-table-column', function() {
+          column = d3.select(this).attr("class");
+          if (column == "dc-table-column _0") {
+              Id = d3.select(this.parentNode).select(".dc-table-column._1").text();
+             	data[Id-1].Selected = d3.select(this).select('input').property('checked');
+          } else {
+              Id = d3.select(this.parentNode).select(".dc-table-column._1").text();
+          	  dataTable.filter(Id);
+          	  dc.redrawAll();
+          	  // make reset link visible
+              d3.select("#resetFormattedTableLink").style("display", "inline");
+              d3.select("#resetTableLink").style("display", "inline");
+          }
+        });
     });
 
     markers = mapChart.markerGroup();
@@ -1264,7 +1270,7 @@ function getPopupContent(data) {
             + (data.Publication5 != "" ? "<li>" + data.Publication5 + "</li>" : "")
             + (data.Publication1 != "" ? "</ul></details>": "")
             + '<input class="btn pull-right" type="image" src="img/error.png" title="Report an issue for this sample" onclick="javascript:reportIssue(displayedData);" style="height:40px;">'
-            + '<input class="btn pull-right" type="image" src="img/cartadd.png" title="Add this sample to the download cart" onclick="javascript:displayedData.Selected=true;dataTable.redraw();" style="height:40px;">'
+            + '<input class="btn pull-right" type="image" src="img/cartadd.png" title="Add this sample to the download cart" onclick="javascript:displayedData.Selected=true;formattedDataTable.redraw();dataTable.redraw();" style="height:40px;">'
             + '<input class="btn pull-right" type="image" src="img/pencil.png" title="Edit the meta information for this sample" onclick="javascript:editDisplayed();" style="height:40px;">'
             + '</div>');
 }
@@ -1329,35 +1335,50 @@ function update_offset() {
     ofs = ofs >= totFilteredRecs ? Math.floor((totFilteredRecs - 1) / pag) * pag : ofs;
     ofs = ofs < 0 ? 0 : ofs;
     dataTable.beginSlice(ofs);
+    formattedDataTable.beginSlice(ofs);
     dataTable.endSlice(ofs+pag);
+    formattedDataTable.endSlice(ofs+pag);
 }
 function display_page_buttons() {
     var totFilteredRecs = xf.groupAll().value();
     var end = ofs + pag > totFilteredRecs ? totFilteredRecs : ofs + pag;
     d3.select('#begin')
         .text(end === 0? ofs : ofs + 1);
+    d3.select('#begin-formatted')
+        .text(end === 0? ofs : ofs + 1);
     d3.select('#end')
+        .text(end);
+    d3.select('#end-formatted')
         .text(end);
     d3.select('#prev-table-page')
         .attr('disabled', ofs-pag<0 ? 'true' : null);
+    d3.select('#prev-formatted-table-page')
+        .attr('disabled', ofs-pag<0 ? 'true' : null);
     d3.select('#next-table-page')
         .attr('disabled', ofs+pag>=totFilteredRecs ? 'true' : null);
+    d3.select('#next-formatted-table-page')
+        .attr('disabled', ofs+pag>=totFilteredRecs ? 'true' : null);
     d3.select('#size').text(totFilteredRecs);
+    d3.select('#size-formatted').text(totFilteredRecs);
     if(totFilteredRecs != xf.size()){
       d3.select('#totalsize').text("(filtered Total: " + xf.size() + " )");
+      d3.select('#totalsize-formatted').text("(filtered Total: " + xf.size() + " )");
     }else{
       d3.select('#totalsize').text('');
+      d3.select('#totalsize-formatted').text('');
     }
 }
 function next_table_page() {
     ofs += pag;
     update_offset();
     dataTable.redraw();
+    formattedDataTable.redraw();
 }
 function prev_table_page() {
     ofs -= pag;
     update_offset();
     dataTable.redraw();
+    formattedDataTable.redraw();
 }
 
 //====================================================================
@@ -1559,9 +1580,6 @@ function initCrossfilter(data) {
   //-----------------------------------
   dataTable = dc.dataTable("#chart-table");
 
-  format1 = d3.format(".0f");
-  format2 = d3.format(".2f");
-
   var  all_columns = Object.keys(data[0]);
   var exclude = ["Selected", "Id", "Edited"];
 
@@ -1590,8 +1608,57 @@ function initCrossfilter(data) {
     .group(function(d) {})
     .showGroups(false)
     .size(Infinity)
-    // .size(xf.size()) //display all data
     .columns(colFuncs)
+    .sortBy(function(d){ return +d.Id; })
+    .order(d3.ascending)
+    .on('preRender', update_offset)
+    .on('preRedraw', update_offset)
+    .on('pretransition', display_page_buttons);
+
+  //-----------------------------------
+  formattedDataTable = dc.dataTable("#formatted-chart-table");
+
+  formattedDataTable
+    .dimension(tableDim)
+    .group(function(d) {})
+    .showGroups(false)
+    .size(Infinity)
+    .columns([
+        d => d.Selected ? "<input type='checkbox' checked>" : "<input type='checkbox'>",
+        d => d.Id,
+        d => d.SampleName,
+        d => d.SiteName,
+        d => d.Country,
+        d => d.Elevation,
+        function(d) {
+            var workers = [];
+            for (var i = 1; i < 5; i++) {
+                if (d[`Worker${i}_LastName`] !== "") {
+                    workers.push(d[`Worker${i}_LastName`] + ', ' +
+                                 d[`Worker${i}_FirstName`]);
+                }
+            }
+            return workers.join('; ');
+        },
+        function(d) {
+            var publications = [];
+            for (var i = 1; i < 6; i++) {
+                if (d['Publication' + i] !== "") {
+                    publications.push(d['Publication' + i]);
+                }
+            }
+            return publications.join('; ');
+        },
+        function (d) {
+            var DOIs = [];
+            for (var i = 1; i < 6; i++) {
+                if (d['DOI' + i] !== "") {
+                    DOIs.push(DOILink(d['DOI' + i]));
+                }
+            }
+            return DOIs.join(', ');
+        }
+    ])
     .sortBy(function(d){ return +d.Id; })
     .order(d3.ascending)
     .on('preRender', update_offset)
@@ -1749,10 +1816,10 @@ function initCrossfilter(data) {
         .controlsUseVisibility(true);
 
     allCharts = [
-        dataTable, versionChart, countryMenu, sampleContextMenu,
-        sampleTypeMenu, sampleMethodMenu, ageChart, locationChart,
-        contributorMenu, workerMenu, temperatureChart, precipChart,
-        okexceptMenu];
+        dataTable, formattedDataTable, versionChart, countryMenu,
+        sampleContextMenu, sampleTypeMenu, sampleMethodMenu, ageChart,
+        locationChart, contributorMenu, workerMenu, temperatureChart,
+        precipChart, okexceptMenu];
 
   //-----------------------------------
   dc.renderAll();
@@ -1791,6 +1858,7 @@ function resetData(data) {
     xf.add([data]);
 
     dataTable.sortBy(d => +d.Id);
+    formattedDataTable.sortBy(d => +d.Id);
 
     dc.redrawAll();
 }
@@ -1805,6 +1873,7 @@ function resetTable() {
   dataTable.filterAll();
   dc.redrawAll();
   // make reset link invisible
+  d3.select("#resetFormattedTableLink").style("display", "none");
   d3.select("#resetTableLink").style("display", "none");
 }
 
