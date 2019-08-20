@@ -21,17 +21,18 @@
     "leaflet-mouse-position": "^1.2.0",
     "leaflet.markercluster": "^1.4.1"
   },
-  "name": "empd2.github.io",
-  "description": "EMPD Database viewer ======================",
+  "name": "empd-viewer",
+  "description": "EMPD Database viewer",
   "version": "0.0.1",
-  "main": "setup.js",
+  "main": "js/setup.js",
   "directories": {
+    "js": "js",
     "lib": "lib",
     "test": "tests"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/EMPD2/EMPD2.github.io.git"
+    "url": "git+https://github.com/EMPD2/EMPD-viewer.git"
   },
   "keywords": [
     "EMPD",
@@ -45,7 +46,7 @@
   "author": "Philipp S. Sommer",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/EMPD2/EMPD2.github.io/issues"
+    "url": "https://github.com/EMPD2/EMPD-viewer/issues"
   },
-  "homepage": "https://github.com/EMPD2/EMPD2.github.io#readme"
+  "homepage": "https://github.com/EMPD2/EMPD-viewer#readme"
 }

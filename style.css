@@ -278,3 +278,8 @@ div.scroll {
 .inline-image {
     height: 1.1em;
 }
+
+.dc-cbox-item label {
+    font-weight: normal;
+    margin: 5px;
+}
