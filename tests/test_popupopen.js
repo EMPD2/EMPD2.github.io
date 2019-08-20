@@ -23,7 +23,9 @@ const plotTestData = ClientFunction(() => displaySampleData({
     "Edited": false
 }));
 
-const getPlottedPollenData = ClientFunction(() => plottedPollenData);
+const getPlottedPollenData = ClientFunction(() => plottedPollenData.test_a1);
+
+const getPollenDiagram = ClientFunction(() => document.getElementById("pollen-diagram-test_a1").innerHTML);
 
 const getClimateDiagram = ClientFunction(() => document.getElementById("climate-diagram-test_a1").innerHTML);
 
@@ -39,6 +41,8 @@ test('Test plotting of the data', async t => {
     const plotted = await plotTestData();
 
     await t.expect(getPlottedPollenData()).ok();
+
+    await t.expect(getPollenDiagram()).ok();
 
     await t.expect(getClimateDiagram()).ok();
 

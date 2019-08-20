@@ -390,6 +390,15 @@
                         <form id='report-form' action="https://empd-admin.herokuapp.com" method="post" target='_blank'>
                             <div class="row form-group">
                                 <div class="col-md-4 mb-3">
+                                    <label for="error-source">What is causing the error?</label>
+                                    <select name="error-source" form="report-form" id="error-source">
+                                        <option value="viewer">the Webviewer</option>
+                                        <option value="data">the pollen data</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                <div class="col-md-4 mb-3">
                                     <label for="report_firstname">First name*</label>
                                     <input type="text" class="form-control" id="report_firstname" name="submitter_firstname" placeholder="Jane" required>
                                 </div>
