@@ -25,9 +25,9 @@ const plotTestData = ClientFunction(() => displaySampleData({
 
 const getPlottedPollenData = ClientFunction(() => plottedPollenData.test_a1);
 
-const getPollenDiagram = ClientFunction(() => document.getElementById("pollen-diagram-test_a1").innerHTML);
+const getPollenDiagram = ClientFunction(() => document.getElementById("pollen-diagram-test_a1").innerHTML.trim());
 
-const getClimateDiagram = ClientFunction(() => document.getElementById("climate-diagram-test_a1").innerHTML);
+const getClimateDiagram = ClientFunction(() => document.getElementById("climate-diagram-test_a1").innerHTML.trim());
 
 fixture `Page build`
     .page `../index.html?branch=test-data&meta=test.tsv`;

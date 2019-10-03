@@ -318,9 +318,9 @@ function plotClimate(data, elemId) {
         }
     }
 
-    var svg = d3.select("#" + elemId).select("svg"),
+    var svg = d3.select("#" + elemId).append("svg"),
         margin = {top: 40, right: 80, bottom: 180, left: 40},
-        width = $("#" + elemId).width() - margin.left - margin.right - 500,
+        width = $("#" + elemId).width() - margin.left - margin.right,
         height = 300 - margin.top - margin.bottom;
 
     svg
