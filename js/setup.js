@@ -159,8 +159,7 @@ $(document).ready(function() {
     if (repo_url == 'data/') {
         document.getElementById("btn-stable").className += ' btn-primary';
         dataVersion = "stable";
-        document.getElementById("version-info").innerHTML += (
-          `This is the last release of the EMPD, version 1, based on Davis, B.A.S. et al. Veget Hist Archaeobot (2013) 22: 521. <a href="https://doi.org/10.1007/s00334-012-0388-5" target="_blank" class="alert-link">10.1007/s00334-012-0388-5</a>. To view the latest version from Github, click <a href="${urlLatest}" class="alert-link">here</a>.`)
+        $("#version-info").hide();
     } else if (data_repo == "EMPD2/EMPD-data" && user_branch == "master") {
         document.getElementById("btn-latest").className += ' btn-primary';
         dataVersion = "latest";
