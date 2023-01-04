@@ -3,7 +3,7 @@
     "test": "testcafe chrome,firefox tests"
   },
   "devDependencies": {
-    "testcafe": "^1.4.1"
+    "testcafe": "^1.20.1"
   },
   "dependencies": {
     "bootstrap": "^3.4.1",
